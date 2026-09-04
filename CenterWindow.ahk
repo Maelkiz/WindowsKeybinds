@@ -1,7 +1,13 @@
 CenterActiveWindow() {
     hwnd := WinExist("A")
 
-    WinGetPos(,, &width, &height, "ahk_id " hwnd)
+    if !hwnd
+        return
+
+    try
+        WinGetPos(,, &width, &height, "ahk_id " hwnd)
+    catch
+        return
 
     monitor := MonitorGetPrimary()
     MonitorGetWorkArea(monitor, &left, &top, &right, &bottom)
@@ -9,5 +15,6 @@ CenterActiveWindow() {
     x := left + ((right - left) - width) / 2
     y := top + ((bottom - top) - height) / 2
 
-    WinMove(x, y,,, "ahk_id " hwnd)
+    try
+        WinMove(x, y,,, "ahk_id " hwnd)
 }

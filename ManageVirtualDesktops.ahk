@@ -12,7 +12,10 @@ GoToDesktop(n) {
 }
 
 MoveWindowToDesktop(n) {
-    hwnd := WinGetID("A")
+    hwnd := WinExist("A")
+
+    if !hwnd
+        return
 
     DllCall(
         "VirtualDesktopAccessor\MoveWindowToDesktopNumber",
