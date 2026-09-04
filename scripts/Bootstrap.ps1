@@ -3,6 +3,8 @@
 #
 # Safe to run again at any time. An existing config is left alone.
 
+. "$PSScriptRoot\Common.ps1"
+
 $RepoDir = Split-Path $PSScriptRoot -Parent
 $SrcDir = Join-Path $RepoDir "src"
 $MasterScript = Join-Path $SrcDir "WindowsKeybinds.ahk"
@@ -12,11 +14,10 @@ $MasterScript = Join-Path $SrcDir "WindowsKeybinds.ahk"
 # Run on login
 # ------------------------------------------------------------
 
-$StartupDir = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Startup"
-$ShortcutPath = Join-Path $StartupDir "WindowsKeybinds.lnk"
+$ShortcutPath = Get-ShortcutPath
 
 try {
-    New-Item -ItemType Directory -Path $StartupDir -Force | Out-Null
+    New-Item -ItemType Directory -Path (Split-Path $ShortcutPath -Parent) -Force | Out-Null
 
     $Shell = New-Object -ComObject WScript.Shell
     $Shortcut = $Shell.CreateShortcut($ShortcutPath)
@@ -39,45 +40,14 @@ catch {
 # decided by ConfigPaths.ahk. Ask the scripts through ConfigPath.ahk
 # rather than writing that search order down a second time here.
 
-$Bases = @()
-if ($env:ProgramFiles)        { $Bases += $env:ProgramFiles }
-if (${env:ProgramFiles(x86)}) { $Bases += ${env:ProgramFiles(x86)} }
-if ($env:LOCALAPPDATA)        { $Bases += (Join-Path $env:LOCALAPPDATA "Programs") }
-
-$AhkExe = $null
-foreach ($Base in $Bases) {
-    foreach ($Name in @("AutoHotkey64.exe", "AutoHotkey32.exe")) {
-        $Candidate = Join-Path $Base "AutoHotkey\v2\$Name"
-        if (Test-Path $Candidate) {
-            $AhkExe = $Candidate
-            break
-        }
-    }
-    if ($AhkExe) { break }
-}
-
-if (-not $AhkExe) {
+if (-not (Find-AutoHotkey)) {
     Write-Warning "Could not find AutoHotkey v2, so no config file was created."
     Write-Host "  Install AutoHotkey v2, then run this script again."
     Write-Host "  The keybinds also create the config themselves when they first run."
     return
 }
 
-# AutoHotkey cannot write to stdout, so it reports the path in a file.
-$Helper = Join-Path $SrcDir "ConfigPath.ahk"
-$PathFile = Join-Path $env:TEMP "WindowsKeybinds-config-path.txt"
-
-if (Test-Path $PathFile) { Remove-Item $PathFile -Force }
-
-Start-Process -FilePath $AhkExe `
-    -ArgumentList "`"$Helper`"", "`"$PathFile`"", "ensure" `
-    -Wait | Out-Null
-
-$ConfigPath = ""
-if (Test-Path $PathFile) {
-    $ConfigPath = (Get-Content $PathFile -Raw).Trim()
-    Remove-Item $PathFile -Force
-}
+$ConfigPath = Get-ConfigPath -RepoDir $RepoDir -Mode ensure
 
 if ($ConfigPath) {
     Write-Host "Configuration:    $ConfigPath"
