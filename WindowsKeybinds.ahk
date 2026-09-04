@@ -20,6 +20,7 @@ Persistent
 #Include WindowRules.ahk
 #Include KeyNames.ahk
 #Include Actions.ahk
+#Include ConfigPaths.ahk
 #Include Config.ahk
 
 

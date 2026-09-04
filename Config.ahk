@@ -3,58 +3,11 @@
 ;
 ; Keybinds and window rules live in an ini file outside this
 ; repository, so that customising them does not mean editing
-; tracked source files.
+; tracked source files. ConfigPaths.ahk decides where it lives.
 ; ============================================================
 
 global ConfigPath := ""
 global ConfigProblems := []
-
-
-; Searched in order, first one that exists wins.
-FindConfigPath() {
-    candidates := []
-
-    override := EnvGet("WINDOWSKEYBINDS_CONFIG")
-    if override != ""
-        candidates.Push(override)
-
-    home := EnvGet("USERPROFILE")
-    if home != ""
-        candidates.Push(home "\.config\WindowsKeybinds\config.ini")
-
-    appData := EnvGet("APPDATA")
-    if appData != ""
-        candidates.Push(appData "\WindowsKeybinds\config.ini")
-
-    candidates.Push(A_ScriptDir "\config.ini")
-
-    for candidate in candidates {
-        if FileExist(candidate)
-            return candidate
-    }
-
-    return ""
-}
-
-
-; Without this a fresh clone would start up and do nothing at all.
-CreateDefaultConfig() {
-    template := A_ScriptDir "\config.default.ini"
-    home := EnvGet("USERPROFILE")
-
-    if !FileExist(template) || home = ""
-        return ""
-
-    target := home "\.config\WindowsKeybinds\config.ini"
-
-    try {
-        DirCreate(home "\.config\WindowsKeybinds")
-        FileCopy(template, target)
-    } catch
-        return ""
-
-    return target
-}
 
 
 ; Returns the section as an array of { key, value }, in file order.
@@ -155,10 +108,7 @@ LoadConfig() {
 
     ConfigProblems := []
 
-    path := FindConfigPath()
-
-    if path = ""
-        path := CreateDefaultConfig()
+    path := EnsureConfigExists()
 
     if path = "" {
         ConfigProblems.Push("Found no configuration file and could not create one.")

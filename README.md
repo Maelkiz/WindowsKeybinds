@@ -24,22 +24,28 @@ All of the above are defaults, and can be configured. See [Configuration](#confi
 git clone https://github.com/Maelkiz/WindowsKeybinds.git
 ```
 
-### 2. Ensure the AutoHotkey scripts run on startup:
-Run the PowerShell script either by double-clicking it in the explorer or from a terminal like so:
+### 2. Run the bootstrap script:
+Either double-click it in the explorer or run it from a terminal like so:
 ```pwsh
-.\CreateStartupShortcuts.ps1
+.\Bootstrap.ps1
 ```
+This makes the keybinds run on login and creates your config file, printing
+where it put it. It is safe to run again later, as an existing config is never
+overwritten.
 
 ### 3. Set up virtual desktops
 If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybinds, press `Super`+`Tab` and ensure you have 10 virtual desktops set up (fewer than 10 will also work).
 
 ## Configuration
 
-On first run, a config file is created at:
+`Bootstrap.ps1` creates a config file at:
 
 ```
 %USERPROFILE%\.config\WindowsKeybinds\config.ini
 ```
+
+The keybinds create it themselves too, if they get started some other way, so
+there is always one there to edit.
 
 It lives outside the repository so that `git pull` never conflicts with your
 own keybinds. [config.default.ini](config.default.ini) is the template it is
