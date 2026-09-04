@@ -12,6 +12,6 @@ Get-CimInstance Win32_Process -Filter "Name = 'AutoHotkey64.exe'" |
 
 Start-Sleep -Milliseconds 300
 
-$MasterScript = Join-Path $RepoDir "WindowsShortcuts.ahk"
+$MasterScript = Join-Path $RepoDir "WindowsKeybinds.ahk"
 Write-Host "Launching: $MasterScript"
 Start-Process -FilePath $MasterScript -WorkingDirectory $RepoDir

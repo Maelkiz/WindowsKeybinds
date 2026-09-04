@@ -6,8 +6,8 @@ New-Item -ItemType Directory -Path $StartupDir -Force | Out-Null
 
 $Shell = New-Object -ComObject WScript.Shell
 
-$AhkFile = Join-Path $RepoDir "WindowsShortcuts.ahk"
-$ShortcutPath = Join-Path $StartupDir "WindowsShortcuts.lnk"
+$AhkFile = Join-Path $RepoDir "WindowsKeybinds.ahk"
+$ShortcutPath = Join-Path $StartupDir "WindowsKeybinds.lnk"
 
 $Shortcut = $Shell.CreateShortcut($ShortcutPath)
 $Shortcut.TargetPath = $AhkFile

@@ -12,7 +12,7 @@
 #Include ManageVirtualDesktops.ahk
 #Include ToggleDekstopIcons.ahk
 #Include ToggleMaximization.ahk
-#Include UnbindWindowsShortcuts.ahk
+#Include UnbindWindowsKeybinds.ahk
 #Include WindowRules.ahk
 
 

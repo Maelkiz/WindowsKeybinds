@@ -1,4 +1,4 @@
-# Windows Shortcuts
+# Windows Keybindings
 
 Uses AutoHotkey v2 to make a better keyboard-first experience on Windows. 
 
@@ -19,7 +19,7 @@ Also unbinds `F1` from launching the help browser.
 
 ### 1. Clone this repository:
 ```bash
-git clone https://github.com/Maelkiz/WindowsShortcuts.git
+git clone https://github.com/Maelkiz/WindowsKeybinds.git
 ```
 
 ### 2. Ensure the AutoHotkey scripts run on startup:
@@ -29,4 +29,4 @@ Run the PowerShell script either by double-clicking it in the explorer or from a
 ```
 
 ### 3. Set up virtual desktops
-If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` shortcuts, press `Super`+`Tab` and ensure you have 10 virtual desktops set up (fewer than 10 will also work).
+If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybinds, press `Super`+`Tab` and ensure you have 10 virtual desktops set up (fewer than 10 will also work).
