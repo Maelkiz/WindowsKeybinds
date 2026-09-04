@@ -87,4 +87,4 @@ else {
 }
 
 Write-Host ""
-Write-Host "Run .\scripts\Refresh.ps1 to start the keybinds now."
+Write-Host "Run .\scripts\Restart.ps1 to start the keybinds now."

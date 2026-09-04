@@ -1,5 +1,5 @@
 # Stops the running AutoHotkey instance for this repo, then relaunches the master script.
-# Use this after editing a script to quickly reload it for testing.
+# Use this after editing a script to quickly restart it for testing.
 
 $RepoDir = Split-Path $PSScriptRoot -Parent
 

@@ -69,7 +69,7 @@ These locations are searched in order, and the first one that exists is used:
 3. `%APPDATA%\WindowsKeybinds\config.ini`
 4. `src\config.ini`, next to the scripts, for a portable install
 
-Run `.\scripts\Refresh.ps1` to pick up your changes.
+Run `.\scripts\Restart.ps1` to pick up your changes.
 
 ### Keybinds
 
