@@ -24,7 +24,9 @@ LaunchNewTerminal() {
     }
 
     if newHwnd {
-        WinActivate "ahk_id " newHwnd
-        WinWaitActive "ahk_id " newHwnd,, 1
+        try {
+            WinActivate "ahk_id " newHwnd
+            WinWaitActive "ahk_id " newHwnd,, 1
+        }
     }
 }

@@ -1,4 +1,6 @@
 GetDesktopListView() {
+    shellView := 0
+
     progman := DllCall("FindWindowW", "WStr", "Progman", "Ptr", 0, "Ptr")
     if progman {
         shellView := DllCall("FindWindowExW", "Ptr", progman, "Ptr", 0, "WStr", "SHELLDLL_DefView", "Ptr", 0, "Ptr")
