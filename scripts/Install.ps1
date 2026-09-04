@@ -3,6 +3,13 @@
 #
 # Safe to run again at any time. An existing config is left alone.
 
+[CmdletBinding()]
+param(
+    # Start the keybinds straight away, rather than leaving them
+    # until the next time you log in.
+    [switch]$Start
+)
+
 . "$PSScriptRoot\Common.ps1"
 
 $RepoDir = Split-Path $PSScriptRoot -Parent
@@ -69,4 +76,13 @@ else {
 }
 
 Write-Host ""
-Write-Host "Run .\scripts\Restart.ps1 to start the keybinds now."
+
+# Handed to Restart.ps1 rather than starting it here, so that there
+# is only one place that knows how to stop and start the keybinds.
+if ($Start) {
+    & "$PSScriptRoot\Restart.ps1"
+}
+else {
+    Write-Host "Run .\scripts\Restart.ps1 to start the keybinds now."
+    Write-Host "  Or run this script with -Start to do both at once."
+}

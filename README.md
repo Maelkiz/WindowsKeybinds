@@ -33,6 +33,13 @@ This makes the keybinds run on login and creates your config file, printing
 where it put it. It is safe to run again later, as an existing config is never
 overwritten.
 
+Add `-Start` to start the keybinds there and then, rather than leaving them
+until the next time you log in:
+
+```pwsh
+.\scripts\Install.ps1 -Start
+```
+
 ### 3. Set up virtual desktops
 If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybinds, press `Super`+`Tab` and ensure you have 10 virtual desktops set up (fewer than 10 will also work).
 
