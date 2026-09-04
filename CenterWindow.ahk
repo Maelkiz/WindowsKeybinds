@@ -1,7 +1,4 @@
-#Requires AutoHotkey v2
-
-#c::
-{
+CenterActiveWindow() {
     hwnd := WinExist("A")
 
     WinGetPos(,, &width, &height, "ahk_id " hwnd)

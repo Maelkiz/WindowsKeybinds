@@ -1,7 +1,4 @@
-#Requires AutoHotkey v2
-
-#f::
-{
+ToggleMaximizeActiveWindow() {
     hwnd := WinExist("A")
 
     if WinGetMinMax("ahk_id " hwnd) = 1

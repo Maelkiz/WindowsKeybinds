@@ -1,5 +1,3 @@
-#Requires AutoHotkey v2
-
 GetDesktopListView() {
     progman := DllCall("FindWindowW", "WStr", "Progman", "Ptr", 0, "Ptr")
     if progman {
@@ -32,6 +30,3 @@ ToggleDesktopIcons() {
     visible := DllCall("IsWindowVisible", "Ptr", lv, "Int")
     DllCall("ShowWindow", "Ptr", lv, "Int", visible ? 0 : 5)
 }
-
-; Hotkey: Win + F12
-#F12::ToggleDesktopIcons()

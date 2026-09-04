@@ -1,3 +1,3 @@
-#Requires AutoHotkey v2
-
-#q::Send "!{F4}"
+CloseActiveWindow() {
+    Send "!{F4}"
+}

@@ -1,6 +1,4 @@
-#Requires AutoHotkey v2
-
-#Enter:: {
+LaunchNewTerminal() {
     existing := Map()
 
     for hwnd in WinGetList("ahk_exe WindowsTerminal.exe")

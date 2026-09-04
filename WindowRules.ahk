@@ -1,6 +1,3 @@
-#Requires AutoHotkey v2
-#SingleInstance Force
-
 ; ============================================================
 ; Rules
 ; ============================================================
@@ -11,25 +8,6 @@ AddRule(processName, desktop) {
     global Rules
     Rules[StrLower(processName)] := desktop
 }
-
-
-; ============================================================
-; Configuration
-; ============================================================
-
-AddRule("chrome.exe",          2)
-AddRule("Code.exe",            3)
-
-
-; ============================================================
-; Virtual Desktop Accessor
-; ============================================================
-
-vda := DllCall(
-    "LoadLibrary",
-    "Str", A_ScriptDir "\VirtualDesktopAccessor.dll",
-    "Ptr"
-)
 
 
 ; ============================================================
