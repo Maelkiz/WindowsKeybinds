@@ -22,6 +22,7 @@ Persistent
 #Include Actions.ahk
 #Include ConfigPaths.ahk
 #Include Config.ahk
+#Include ConfigWatcher.ahk
 
 
 ; ============================================================
@@ -30,3 +31,4 @@ Persistent
 
 LoadConfig()
 ReportConfigProblems()
+StartConfigWatcher()
