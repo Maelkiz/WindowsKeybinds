@@ -69,7 +69,9 @@ These locations are searched in order, and the first one that exists is used:
 3. `%APPDATA%\WindowsKeybinds\config.ini`
 4. `src\config.ini`, next to the scripts, for a portable install
 
-Run `.\scripts\Restart.ps1` to pick up your changes.
+Changes are picked up on their own, a second or so after you save. Only
+`.\scripts\Restart.ps1` is needed after editing the AutoHotkey scripts
+themselves.
 
 ### Keybinds
 
@@ -120,9 +122,12 @@ Code.exe = 3
 ### When something is wrong
 
 Anything the config file gets wrong — an unknown action, a misspelled key, a
-key bound twice — is reported in a tray notification at startup, naming the
-line at fault. Every other keybind still works, so a typo never leaves you
-without a keyboard.
+key bound twice — is reported in a tray notification naming the line at fault.
+
+At startup, every keybind that does make sense is still applied, so a typo
+never leaves you without a keyboard. When you save a broken config while the
+keybinds are already running, they are left alone entirely and nothing is
+reloaded until the file makes sense again.
 
 ### Adding your own actions
 
