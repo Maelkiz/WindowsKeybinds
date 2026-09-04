@@ -58,6 +58,14 @@ WinEventProc(
 ) {
     global Rules
 
+    ; CallbackCreate hands every parameter over as a 64 bit value,
+    ; but idObject and idChild are 32 bit, so the upper half of each
+    ; is whatever happened to be on the stack. Only the lower half
+    ; carries any meaning, and without masking the check below
+    ; throws away the window events it is meant to let through.
+    idObject &= 0xFFFFFFFF
+    idChild &= 0xFFFFFFFF
+
     ; Only interested in top-level windows
     if idObject != 0 || idChild != 0
         return
