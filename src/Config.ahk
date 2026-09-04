@@ -10,45 +10,83 @@ global ConfigPath := ""
 global ConfigProblems := []
 
 
-; Returns the section as an array of { key, value }, in file order.
-ReadConfigSection(path, section) {
-    entries := []
-
+; Reports failure separately from the contents, so that an empty
+; file and an unreadable one cannot be confused for one another.
+ReadConfigText(path, &text) {
     try
-        raw := IniRead(path, section)
+        text := FileRead(path, "UTF-8")
     catch
-        return entries
+        return false
 
-    for line in StrSplit(raw, "`n", "`r") {
-        line := Trim(line)
+    return true
+}
 
+
+; The whole file, parsed into { key, value } arrays by section and
+; kept in file order.
+;
+; Parsed here rather than through the Windows ini functions, which
+; do not recognise a UTF-8 byte order mark. A config saved that way
+; would look completely empty to them, silently leaving no keybinds
+; at all rather than reporting anything wrong.
+ReadConfigSections(path) {
+    sections := Map()
+    sections.CaseSense := "Off"
+
+    text := ""
+    if !ReadConfigText(path, &text)
+        return sections
+
+    section := ""
+
+    for line in StrSplit(text, "`n", "`r`t ") {
         if line = "" || SubStr(line, 1, 1) = ";"
+            continue
+
+        if SubStr(line, 1, 1) = "[" && SubStr(line, -1) = "]" {
+            section := Trim(SubStr(line, 2, StrLen(line) - 2))
+
+            if !sections.Has(section)
+                sections[section] := []
+
+            continue
+        }
+
+        ; Anything before the first section header has no home.
+        if section = ""
             continue
 
         separator := InStr(line, "=")
         if !separator
             continue
 
-        entries.Push({
+        sections[section].Push({
             key: Trim(SubStr(line, 1, separator - 1)),
             value: Trim(SubStr(line, separator + 1))
         })
     }
 
-    return entries
+    return sections
+}
+
+
+SectionEntries(sections, name) {
+    return sections.Has(name) ? sections[name] : []
 }
 
 
 ; Works out what a configuration file asks for without changing
 ; anything, so that a new one can be checked before it is acted on.
 ResolveConfig(path) {
+    sections := ReadConfigSections(path)
+
     problems := []
     bindings := []
     rules := []
 
     bound := Map()
 
-    for entry in ReadConfigSection(path, "Keybinds") {
+    for entry in SectionEntries(sections, "Keybinds") {
         try
             hotkeyString := ToHotkeyString(entry.key)
         catch Error as problem {
@@ -81,7 +119,7 @@ ResolveConfig(path) {
         })
     }
 
-    for entry in ReadConfigSection(path, "WindowRules") {
+    for entry in SectionEntries(sections, "WindowRules") {
         if !IsInteger(entry.value) {
             problems.Push(
                 '[WindowRules] Desktop for "' entry.key '" should be a whole'

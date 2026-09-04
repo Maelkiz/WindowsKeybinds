@@ -33,18 +33,6 @@ StartConfigWatcher() {
 }
 
 
-; Reports failure separately from the contents, so that an empty
-; file and an unreadable one cannot be confused for one another.
-ReadConfigText(path, &text) {
-    try
-        text := FileRead(path, "UTF-8")
-    catch
-        return false
-
-    return true
-}
-
-
 CheckConfigForChanges() {
     global ConfigPath, ConfigProblems, LastSeenConfig, PendingConfig
 
