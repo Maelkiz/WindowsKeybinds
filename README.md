@@ -23,7 +23,7 @@ git clone https://github.com/Maelkiz/WindowsShortcuts.git
 ```
 
 ### 2. Ensure the AutoHotkey scripts run on startup:
-Open a PowerShell terminal with administrator rights, navigate to the repository, and run the PowerShell script like so:
+Run the PowerShell script either by double-clicking it in the explorer or from a terminal like so:
 ```pwsh
 .\CreateStartupShortcuts.ps1
 ```
