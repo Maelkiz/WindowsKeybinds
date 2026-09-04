@@ -1,7 +1,7 @@
 # Stops the running AutoHotkey instance for this repo, then relaunches the master script.
 # Use this after editing a script to quickly reload it for testing.
 
-$RepoDir = $PSScriptRoot
+$RepoDir = Split-Path $PSScriptRoot -Parent
 
 Get-CimInstance Win32_Process -Filter "Name = 'AutoHotkey64.exe'" |
     Where-Object { $_.CommandLine -like "*$RepoDir*" } |
@@ -12,6 +12,6 @@ Get-CimInstance Win32_Process -Filter "Name = 'AutoHotkey64.exe'" |
 
 Start-Sleep -Milliseconds 300
 
-$MasterScript = Join-Path $RepoDir "WindowsKeybinds.ahk"
+$MasterScript = Join-Path $RepoDir "src\WindowsKeybinds.ahk"
 Write-Host "Launching: $MasterScript"
-Start-Process -FilePath $MasterScript -WorkingDirectory $RepoDir
+Start-Process -FilePath $MasterScript -WorkingDirectory (Join-Path $RepoDir "src")

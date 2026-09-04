@@ -15,7 +15,7 @@ Persistent
 #Include LaunchBrowser.ahk
 #Include LaunchTerminal.ahk
 #Include ManageVirtualDesktops.ahk
-#Include ToggleDekstopIcons.ahk
+#Include ToggleDesktopIcons.ahk
 #Include ToggleMaximization.ahk
 #Include WindowRules.ahk
 #Include KeyNames.ahk

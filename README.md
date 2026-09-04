@@ -27,7 +27,7 @@ git clone https://github.com/Maelkiz/WindowsKeybinds.git
 ### 2. Run the bootstrap script:
 Either double-click it in the explorer or run it from a terminal like so:
 ```pwsh
-.\Bootstrap.ps1
+.\scripts\Bootstrap.ps1
 ```
 This makes the keybinds run on login and creates your config file, printing
 where it put it. It is safe to run again later, as an existing config is never
@@ -36,9 +36,20 @@ overwritten.
 ### 3. Set up virtual desktops
 If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybinds, press `Super`+`Tab` and ensure you have 10 virtual desktops set up (fewer than 10 will also work).
 
+## Repository layout
+
+| Path | Contents |
+|------|----------|
+| [src/](src/) | The AutoHotkey scripts, and the files they load at runtime |
+| [scripts/](scripts/) | PowerShell helpers for setting up and reloading |
+
+The keybinds run from your clone rather than being copied anywhere, so keep it
+somewhere permanent. If you do move it, run `.\scripts\Bootstrap.ps1` again to
+point the startup shortcut at the new location.
+
 ## Configuration
 
-`Bootstrap.ps1` creates a config file at:
+`scripts\Bootstrap.ps1` creates a config file at:
 
 ```
 %USERPROFILE%\.config\WindowsKeybinds\config.ini
@@ -48,7 +59,7 @@ The keybinds create it themselves too, if they get started some other way, so
 there is always one there to edit.
 
 It lives outside the repository so that `git pull` never conflicts with your
-own keybinds. [config.default.ini](config.default.ini) is the template it is
+own keybinds. [config.default.ini](src/config.default.ini) is the template it is
 copied from, and documents every key name and action inline.
 
 These locations are searched in order, and the first one that exists is used:
@@ -56,9 +67,9 @@ These locations are searched in order, and the first one that exists is used:
 1. The path in the `WINDOWSKEYBINDS_CONFIG` environment variable
 2. `%USERPROFILE%\.config\WindowsKeybinds\config.ini`
 3. `%APPDATA%\WindowsKeybinds\config.ini`
-4. `config.ini` next to the scripts, for a portable install
+4. `src\config.ini`, next to the scripts, for a portable install
 
-Run `.\Refresh.ps1` to pick up your changes.
+Run `.\scripts\Refresh.ps1` to pick up your changes.
 
 ### Keybinds
 
@@ -115,7 +126,7 @@ without a keyboard.
 
 ### Adding your own actions
 
-Actions are looked up by name in a table in [Actions.ahk](Actions.ahk). Write a
+Actions are looked up by name in a table in [Actions.ahk](src/Actions.ahk). Write a
 function in a file of its own, `#Include` it from
-[WindowsKeybinds.ahk](WindowsKeybinds.ahk), and add one `RegisterAction` line
+[WindowsKeybinds.ahk](src/WindowsKeybinds.ahk), and add one `RegisterAction` line
 to make it available to the config file.

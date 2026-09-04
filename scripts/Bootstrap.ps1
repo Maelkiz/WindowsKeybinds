@@ -3,8 +3,9 @@
 #
 # Safe to run again at any time. An existing config is left alone.
 
-$RepoDir = $PSScriptRoot
-$MasterScript = Join-Path $RepoDir "WindowsKeybinds.ahk"
+$RepoDir = Split-Path $PSScriptRoot -Parent
+$SrcDir = Join-Path $RepoDir "src"
+$MasterScript = Join-Path $SrcDir "WindowsKeybinds.ahk"
 
 
 # ------------------------------------------------------------
@@ -20,7 +21,7 @@ try {
     $Shell = New-Object -ComObject WScript.Shell
     $Shortcut = $Shell.CreateShortcut($ShortcutPath)
     $Shortcut.TargetPath = $MasterScript
-    $Shortcut.WorkingDirectory = $RepoDir
+    $Shortcut.WorkingDirectory = $SrcDir
     $Shortcut.Save()
 
     Write-Host "Startup shortcut: $ShortcutPath"
@@ -63,7 +64,7 @@ if (-not $AhkExe) {
 }
 
 # AutoHotkey cannot write to stdout, so it reports the path in a file.
-$EnsureScript = Join-Path $RepoDir "EnsureConfig.ahk"
+$EnsureScript = Join-Path $SrcDir "EnsureConfig.ahk"
 $PathFile = Join-Path $env:TEMP "WindowsKeybinds-config-path.txt"
 
 if (Test-Path $PathFile) { Remove-Item $PathFile -Force }
@@ -86,4 +87,4 @@ else {
 }
 
 Write-Host ""
-Write-Host "Run .\Refresh.ps1 to start the keybinds now."
+Write-Host "Run .\scripts\Refresh.ps1 to start the keybinds now."
