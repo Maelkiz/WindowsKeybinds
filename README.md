@@ -41,11 +41,34 @@ If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybind
 | Path | Contents |
 |------|----------|
 | [src/](src/) | The AutoHotkey scripts, and the files they load at runtime |
-| [scripts/](scripts/) | PowerShell helpers for setting up and reloading |
+| [scripts/](scripts/) | PowerShell helpers: `Install`, `Uninstall`, `Restart` |
 
 The keybinds run from your clone rather than being copied anywhere, so keep it
 somewhere permanent. If you do move it, run `.\scripts\Install.ps1` again to
-point the startup shortcut at the new location.
+point the startup shortcut at the new location; it will say what it
+repointed from.
+
+## Uninstalling
+
+```pwsh
+.\scripts\Uninstall.ps1
+```
+
+Stops the keybinds and stops them running on login. Your config file is kept
+and its location printed, so add `-RemoveConfig` if you want that gone too.
+The clone is never touched either way, so delete it yourself afterwards.
+
+If the startup shortcut belongs to a different clone, it is left alone and
+reported rather than removed. Pass `-Force` to remove it regardless.
+
+Should you delete the clone before uninstalling, the uninstaller goes with it.
+Two things are then left to remove by hand:
+
+```
+%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\WindowsKeybinds.lnk
+%USERPROFILE%\.config\WindowsKeybinds\
+```
+
 
 ## Configuration
 
