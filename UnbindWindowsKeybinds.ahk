@@ -1,3 +1,0 @@
-DisableF1Help() {
-    Return
-}
