@@ -36,7 +36,7 @@ catch {
 # ------------------------------------------------------------
 
 # Which paths get searched, and where a new config gets written, is
-# decided by ConfigPaths.ahk. Ask the scripts through EnsureConfig.ahk
+# decided by ConfigPaths.ahk. Ask the scripts through ConfigPath.ahk
 # rather than writing that search order down a second time here.
 
 $Bases = @()
@@ -64,13 +64,13 @@ if (-not $AhkExe) {
 }
 
 # AutoHotkey cannot write to stdout, so it reports the path in a file.
-$EnsureScript = Join-Path $SrcDir "EnsureConfig.ahk"
+$Helper = Join-Path $SrcDir "ConfigPath.ahk"
 $PathFile = Join-Path $env:TEMP "WindowsKeybinds-config-path.txt"
 
 if (Test-Path $PathFile) { Remove-Item $PathFile -Force }
 
 Start-Process -FilePath $AhkExe `
-    -ArgumentList "`"$EnsureScript`"", "`"$PathFile`"" `
+    -ArgumentList "`"$Helper`"", "`"$PathFile`"", "ensure" `
     -Wait | Out-Null
 
 $ConfigPath = ""
