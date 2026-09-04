@@ -1,8 +1,8 @@
 ; ============================================================
 ; Where the configuration file lives
 ;
-; Kept separate from the rest of the configuration handling so
-; that Bootstrap.ps1 can ask for the path through EnsureConfig.ahk
+; Kept separate from the rest of the configuration handling so that
+; the PowerShell scripts can ask for the path through ConfigPath.ahk
 ; without the search order being written down in two places.
 ; ============================================================
 
@@ -33,7 +33,7 @@ FindConfigPath() {
 }
 
 
-; Bootstrap.ps1 normally does this, but doing it here as well means
+; Install.ps1 normally does this, but doing it here as well means
 ; the keybinds still work when the script is started some other way.
 CreateDefaultConfig() {
     template := A_ScriptDir "\config.default.ini"

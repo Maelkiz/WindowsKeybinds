@@ -17,15 +17,27 @@ $MasterScript = Join-Path $SrcDir "WindowsKeybinds.ahk"
 $ShortcutPath = Get-ShortcutPath
 
 try {
+    $Shell = New-Object -ComObject WScript.Shell
+
+    # Worth saying out loud when the clone has moved, so that
+    # running this again does not look like it did nothing.
+    $PreviousTarget = ""
+    if (Test-Path $ShortcutPath) {
+        $PreviousTarget = $Shell.CreateShortcut($ShortcutPath).TargetPath
+    }
+
     New-Item -ItemType Directory -Path (Split-Path $ShortcutPath -Parent) -Force | Out-Null
 
-    $Shell = New-Object -ComObject WScript.Shell
     $Shortcut = $Shell.CreateShortcut($ShortcutPath)
     $Shortcut.TargetPath = $MasterScript
     $Shortcut.WorkingDirectory = $SrcDir
     $Shortcut.Save()
 
     Write-Host "Startup shortcut: $ShortcutPath"
+
+    if ($PreviousTarget -and $PreviousTarget -ne $MasterScript) {
+        Write-Host "  Repointed from:  $PreviousTarget"
+    }
 }
 catch {
     Write-Warning "Could not create the startup shortcut: $($_.Exception.Message)"

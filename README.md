@@ -24,10 +24,10 @@ All of the above are defaults, and can be configured. See [Configuration](#confi
 git clone https://github.com/Maelkiz/WindowsKeybinds.git
 ```
 
-### 2. Run the bootstrap script:
+### 2. Run the install script:
 Either double-click it in the explorer or run it from a terminal like so:
 ```pwsh
-.\scripts\Bootstrap.ps1
+.\scripts\Install.ps1
 ```
 This makes the keybinds run on login and creates your config file, printing
 where it put it. It is safe to run again later, as an existing config is never
@@ -44,12 +44,12 @@ If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybind
 | [scripts/](scripts/) | PowerShell helpers for setting up and reloading |
 
 The keybinds run from your clone rather than being copied anywhere, so keep it
-somewhere permanent. If you do move it, run `.\scripts\Bootstrap.ps1` again to
+somewhere permanent. If you do move it, run `.\scripts\Install.ps1` again to
 point the startup shortcut at the new location.
 
 ## Configuration
 
-`scripts\Bootstrap.ps1` creates a config file at:
+`scripts\Install.ps1` creates a config file at:
 
 ```
 %USERPROFILE%\.config\WindowsKeybinds\config.ini
