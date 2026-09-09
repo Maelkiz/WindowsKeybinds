@@ -22,15 +22,16 @@ RegisterAction(name, fn, params := "") {
 DoNothing(*) {
 }
 
-RegisterAction("CenterWindow",        CenterActiveWindow)
-RegisterAction("CloseWindow",         CloseActiveWindow)
-RegisterAction("LaunchBrowser",       LaunchBrowser)
-RegisterAction("LaunchTerminal",      LaunchNewTerminal)
-RegisterAction("ToggleMaximization",  ToggleMaximizeActiveWindow)
-RegisterAction("ToggleDesktopIcons",  ToggleDesktopIcons)
-RegisterAction("GoToDesktop",         GoToDesktop,         ["int"])
-RegisterAction("MoveWindowToDesktop", MoveWindowToDesktop, ["int"])
-RegisterAction("None",                DoNothing)
+RegisterAction("CenterWindow",          CenterActiveWindow)
+RegisterAction("CloseWindow",           CloseActiveWindow)
+RegisterAction("LaunchBrowser",         LaunchBrowser)
+RegisterAction("LaunchTerminal",        LaunchNewTerminal)
+RegisterAction("LaunchWindowsSettings", LaunchWindowsSettings)
+RegisterAction("ToggleMaximization",    ToggleMaximizeActiveWindow)
+RegisterAction("ToggleDesktopIcons",    ToggleDesktopIcons)
+RegisterAction("GoToDesktop",           GoToDesktop,                ["int"])
+RegisterAction("MoveWindowToDesktop",   MoveWindowToDesktop,        ["int"])
+RegisterAction("None",                  DoNothing)
 
 
 ; Turns a configuration value such as "GoToDesktop 1" into the

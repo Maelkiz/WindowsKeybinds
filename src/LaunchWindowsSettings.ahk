@@ -1,0 +1,3 @@
+LaunchWindowsSettings() {
+    Run "ms-settings:"
+}

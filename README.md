@@ -6,6 +6,7 @@ Uses AutoHotkey v2 to make a better keyboard-first experience on Windows.
 |---------|--------|
 | `Super`+`Enter` | Launch a new terminal window |
 | `Super`+`B` | Launch a new browser window |
+| `Super`+`,` | Open the Windows settings app |
 | `Super`+`F` | Toggle window maximization state |
 | `Super`+`Q` | Close window |
 | `Super`+`C` | Center window |
@@ -153,6 +154,7 @@ physical keys, so `Plus` and `Equals` are the same key — write
 | `CloseWindow` | |
 | `LaunchBrowser` | |
 | `LaunchTerminal` | |
+| `LaunchWindowsSettings` | |
 | `ToggleMaximization` | |
 | `ToggleDesktopIcons` | |
 | `GoToDesktop` | desktop number |
