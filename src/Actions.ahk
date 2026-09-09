@@ -6,6 +6,19 @@
 ; configuration stays valid even if a function is renamed.
 ; ============================================================
 
+; Every file below supplies one of the actions registered here, and
+; this file does not load without all of them.
+#Include CenterWindow.ahk
+#Include CloseWindow.ahk
+#Include LaunchBrowser.ahk
+#Include LaunchTerminal.ahk
+#Include LaunchWindowsSettings.ahk
+#Include ManageVirtualDesktops.ahk
+#Include StartMenu.ahk
+#Include ToggleDesktopIcons.ahk
+#Include ToggleMaximization.ahk
+
+
 global Actions := Map()
 
 RegisterAction(name, fn, params := "") {
@@ -27,6 +40,7 @@ RegisterAction("CloseWindow",           CloseActiveWindow)
 RegisterAction("LaunchBrowser",         LaunchBrowser)
 RegisterAction("LaunchTerminal",        LaunchNewTerminal)
 RegisterAction("LaunchWindowsSettings", LaunchWindowsSettings)
+RegisterAction("OpenStartMenu",         OpenStartMenu)
 RegisterAction("ToggleMaximization",    ToggleMaximizeActiveWindow)
 RegisterAction("ToggleDesktopIcons",    ToggleDesktopIcons)
 RegisterAction("GoToDesktop",           GoToDesktop,                ["int"])

@@ -12,6 +12,7 @@ SettingDefaults.CaseSense := "Off"
 
 SettingDefaults["FollowManualMoves"] := true
 SettingDefaults["FollowRuleMoves"] := true
+SettingDefaults["UnbindStartMenu"] := false
 
 global SettingValues := Map()
 SettingValues.CaseSense := "Off"

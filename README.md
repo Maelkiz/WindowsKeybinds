@@ -110,19 +110,24 @@ themselves.
 |---------|---------|---------|
 | `FollowManualMoves` | `true` | `Super`+`Shift`+`<number>` takes you along to the desktop the window was sent to |
 | `FollowRuleMoves` | `true` | A window moved by a window rule takes you along to its desktop as it opens |
+| `UnbindStartMenu` | `false` | Stop the Windows key on its own from opening the start menu |
 
 ```ini
 [Settings]
 FollowManualMoves = true
 FollowRuleMoves = false
+UnbindStartMenu = true
 ```
 
-Both accept `true` or `false`, and `1` or `0`. Set `FollowRuleMoves = false` if
+All accept `true` or `false`, and `1` or `0`. Set `FollowRuleMoves = false` if
 you would rather rules tidied windows away in the background without pulling
-you off whatever you were doing.
+you off whatever you were doing. Either way the keyboard focus is never left
+on a window that has gone to another desktop, so what you type always goes to
+something you can see.
 
-Either way the keyboard focus is never left on a window that has gone to
-another desktop, so what you type always goes to something you can see.
+`UnbindStartMenu` frees up the Windows key itself. `Super`+`<key>` combinations
+carry on working, and binding `OpenStartMenu` to something gives you the start
+menu back on a key of your choosing.
 
 ### Keybinds
 
@@ -155,6 +160,7 @@ physical keys, so `Plus` and `Equals` are the same key — write
 | `LaunchBrowser` | |
 | `LaunchTerminal` | |
 | `LaunchWindowsSettings` | |
+| `OpenStartMenu` | |
 | `ToggleMaximization` | |
 | `ToggleDesktopIcons` | |
 | `GoToDesktop` | desktop number |
