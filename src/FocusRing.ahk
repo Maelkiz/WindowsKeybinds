@@ -19,6 +19,9 @@ global DWMWA_COLOR_DEFAULT := 0xFFFFFFFF
 ; COLORREF is 0x00BBGGRR, so this is a bright azure.
 global FocusRingColour := 0x00FFA000
 
+; How often to check the ring is where it belongs.
+global FocusRingInterval := 250
+
 ; Which window is currently wearing the ring, so that it can be
 ; given its ordinary border back when the focus moves on.
 global RingedWindow := 0
@@ -28,7 +31,7 @@ global FocusRingHook := 0
 
 
 StartFocusRing() {
-    global FocusRingCallback, FocusRingHook
+    global FocusRingCallback, FocusRingHook, FocusRingInterval
 
     if !Setting("ShowFocusRing")
         return
@@ -50,9 +53,35 @@ StartFocusRing() {
 
     OnExit(StopFocusRing)
 
+    SetTimer(SyncFocusRing, FocusRingInterval)
+
     ; Mark whatever holds the focus already, rather than leaving
     ; nothing marked until the next time it changes.
-    MarkFocused(DllCall("GetForegroundWindow", "Ptr"))
+    SyncFocusRing()
+}
+
+
+; The hook is what makes the ring keep up with the eye. It cannot
+; be relied on alone though: alt-tab does not always announce the
+; window it lands on, and some apps colour their own frame a moment
+; after taking the focus, painting over this. So the foreground
+; window is also checked at a steady interval, which covers both.
+SyncFocusRing() {
+    global RingedWindow, FocusRingColour
+
+    hwnd := ForegroundWindow()
+
+    if !hwnd
+        return
+
+    if hwnd != RingedWindow {
+        MarkFocused(hwnd)
+        return
+    }
+
+    ; Same window as last time, so just make sure the colour on it
+    ; is still the one we asked for.
+    SetBorderColour(hwnd, FocusRingColour)
 }
 
 
@@ -60,15 +89,7 @@ FocusRingProc(hook, event, hwnd, idObject, idChild, thread, time) {
     if !hwnd
         return
 
-    ; Not every window reports this event against the window itself,
-    ; some name a child object, so filtering on idObject would throw
-    ; away real focus changes. Climbing to the top level window is
-    ; both simpler and reliable.
-    ;
-    ; GA_ROOT
-    root := DllCall("GetAncestor", "Ptr", hwnd, "UInt", 2, "Ptr")
-
-    MarkFocused(root ? root : hwnd)
+    MarkFocused(TopLevel(hwnd))
 }
 
 
@@ -88,29 +109,25 @@ MarkFocused(hwnd) {
 
     ; Only remember it if Windows actually took the colour, so that
     ; a window which refused one is not reset later for nothing.
-    if SetBorderColour(hwnd, FocusRingColour) != 0
-        return
-
-    RingedWindow := hwnd
-
-    ; Some apps colour their own frame as they take the focus, and
-    ; land on top of this. Windows Terminal is one. Asking again a
-    ; moment later settles it, twice over because a window that is
-    ; still starting up takes longer to get round to it.
-    ; Bound rather than a closure, because two identical closures in
-    ; a loop are one and the same object, so the second SetTimer
-    ; would move the first timer instead of adding a second.
-    for delay in [-200, -800]
-        SetTimer(Reassert.Bind(hwnd), delay)
+    if SetBorderColour(hwnd, FocusRingColour) = 0
+        RingedWindow := hwnd
 }
 
 
-Reassert(hwnd, *) {
-    global RingedWindow, FocusRingColour
+ForegroundWindow() {
+    hwnd := DllCall("GetForegroundWindow", "Ptr")
 
-    ; Only while it is still the window holding the focus.
-    if hwnd = RingedWindow
-        SetBorderColour(hwnd, FocusRingColour)
+    return hwnd ? TopLevel(hwnd) : 0
+}
+
+
+; Not every window announces itself by its own handle, some name a
+; child object, so the top level owner is what gets the ring.
+TopLevel(hwnd) {
+    ; GA_ROOT
+    root := DllCall("GetAncestor", "Ptr", hwnd, "UInt", 2, "Ptr")
+
+    return root ? root : hwnd
 }
 
 
@@ -138,6 +155,8 @@ SetBorderColour(hwnd, colour) {
 ; rude, and reloading counts as going.
 StopFocusRing(*) {
     global FocusRingHook, FocusRingCallback, RingedWindow, DWMWA_COLOR_DEFAULT
+
+    SetTimer(SyncFocusRing, 0)
 
     if RingedWindow {
         SetBorderColour(RingedWindow, DWMWA_COLOR_DEFAULT)
