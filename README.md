@@ -11,7 +11,7 @@ Uses AutoHotkey v2 to make a better keyboard-first experience on Windows.
 | `Super`+`C` | Center window |
 | `Super`+`<number>` | Switch to virtual desktop of said number |
 | `Super`+`Shift`+`<number>` | Move window to virtual desktop of said number |
-| `Super`+`F12` | Toggle visibility of desktop icons (hide your mess instead of cleaning it up) |
+| `Super`+`I` | Toggle visibility of desktop icons (hide your mess instead of cleaning it up) |
 
 Also unbinds `F1` from launching the help browser.
 
