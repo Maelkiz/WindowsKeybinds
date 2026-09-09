@@ -88,8 +88,29 @@ MarkFocused(hwnd) {
 
     ; Only remember it if Windows actually took the colour, so that
     ; a window which refused one is not reset later for nothing.
-    if SetBorderColour(hwnd, FocusRingColour) = 0
-        RingedWindow := hwnd
+    if SetBorderColour(hwnd, FocusRingColour) != 0
+        return
+
+    RingedWindow := hwnd
+
+    ; Some apps colour their own frame as they take the focus, and
+    ; land on top of this. Windows Terminal is one. Asking again a
+    ; moment later settles it, twice over because a window that is
+    ; still starting up takes longer to get round to it.
+    ; Bound rather than a closure, because two identical closures in
+    ; a loop are one and the same object, so the second SetTimer
+    ; would move the first timer instead of adding a second.
+    for delay in [-200, -800]
+        SetTimer(Reassert.Bind(hwnd), delay)
+}
+
+
+Reassert(hwnd, *) {
+    global RingedWindow, FocusRingColour
+
+    ; Only while it is still the window holding the focus.
+    if hwnd = RingedWindow
+        SetBorderColour(hwnd, FocusRingColour)
 }
 
 
