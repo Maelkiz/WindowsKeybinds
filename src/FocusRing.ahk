@@ -16,8 +16,10 @@ global DWMWA_BORDER_COLOR := 34
 ; Hands the border back to Windows to draw as it usually would.
 global DWMWA_COLOR_DEFAULT := 0xFFFFFFFF
 
-; COLORREF is 0x00BBGGRR, so this is a bright azure.
-global FocusRingColour := 0x00FFA000
+; COLORREF is 0x00BBGGRR, so this is white. Not to be confused
+; with DWMWA_COLOR_DEFAULT above, which is 0xFFFFFFFF and means
+; something else entirely.
+global FocusRingColour := 0x00FFFFFF
 
 ; How often to check the ring is where it belongs.
 global FocusRingInterval := 250
