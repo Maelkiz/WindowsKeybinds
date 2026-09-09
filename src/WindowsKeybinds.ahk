@@ -23,6 +23,7 @@ Persistent
 #Include Actions.ahk
 #Include Settings.ahk
 #Include StartMenu.ahk
+#Include FocusRing.ahk
 #Include ConfigPaths.ahk
 #Include Config.ahk
 #Include ConfigWatcher.ahk
@@ -35,4 +36,5 @@ Persistent
 LoadConfig()
 ReportConfigProblems()
 UnbindStartMenuKey()
+StartFocusRing()
 StartConfigWatcher()

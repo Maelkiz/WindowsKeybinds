@@ -40,7 +40,15 @@ ReadConfigSections(path) {
     section := ""
 
     for line in StrSplit(text, "`n", "`r`t ") {
-        if line = "" || SubStr(line, 1, 1) = ";"
+        ; A comment can sit at the end of a line as well as on one
+        ; of its own, and none of the things written here have any
+        ; use for a semicolon, so everything from the first one is
+        ; dropped. A whole line comment simply becomes empty.
+        comment := InStr(line, ";")
+        if comment
+            line := Trim(SubStr(line, 1, comment - 1))
+
+        if line = ""
             continue
 
         if SubStr(line, 1, 1) = "[" && SubStr(line, -1) = "]" {

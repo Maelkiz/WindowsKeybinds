@@ -111,12 +111,14 @@ themselves.
 | `FollowManualMoves` | `true` | `Super`+`Shift`+`<number>` takes you along to the desktop the window was sent to |
 | `FollowRuleMoves` | `true` | A window moved by a window rule takes you along to its desktop as it opens |
 | `UnbindStartMenu` | `false` | Stop the Windows key on its own from opening the start menu |
+| `ShowFocusRing` | `true` | Colour the border of the focused window |
 
 ```ini
 [Settings]
 FollowManualMoves = true
 FollowRuleMoves = false
 UnbindStartMenu = true
+ShowFocusRing = true
 ```
 
 All accept `true` or `false`, and `1` or `0`. Set `FollowRuleMoves = false` if
@@ -128,6 +130,10 @@ something you can see.
 `UnbindStartMenu` frees up the Windows key itself. `Super`+`<key>` combinations
 carry on working, and binding `OpenStartMenu` to something gives you the start
 menu back on a key of your choosing.
+
+`ShowFocusRing` asks Windows to draw the focused window's border in a colour of
+its own, which is a one pixel line, so it is a quiet hint rather than a shout.
+Windows 11 only, and apps that draw their own title bars may ignore it.
 
 ### Keybinds
 
