@@ -103,6 +103,26 @@ Changes are picked up on their own, a second or so after you save. Only
 `.\scripts\Restart.ps1` is needed after editing the AutoHotkey scripts
 themselves.
 
+### Settings
+
+| Setting | Default | Meaning |
+|---------|---------|---------|
+| `FollowManualMoves` | `true` | `Super`+`Shift`+`<number>` takes you along to the desktop the window was sent to |
+| `FollowRuleMoves` | `true` | A window moved by a window rule takes you along to its desktop as it opens |
+
+```ini
+[Settings]
+FollowManualMoves = true
+FollowRuleMoves = false
+```
+
+Both accept `true` or `false`, and `1` or `0`. Set `FollowRuleMoves = false` if
+you would rather rules tidied windows away in the background without pulling
+you off whatever you were doing.
+
+Either way the keyboard focus is never left on a window that has gone to
+another desktop, so what you type always goes to something you can see.
+
 ### Keybinds
 
 Keys are written as `Modifier+Modifier+Key`, and actions are named:

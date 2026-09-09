@@ -116,12 +116,44 @@ ApplyRule(hwnd) {
         return
 
     desktop := Rules[processName]
+    target := desktop - 1
+    from := CurrentDesktop()
 
     DllCall(
         "VirtualDesktopAccessor\MoveWindowToDesktopNumber",
         "Ptr", hwnd,
-        "Int", desktop - 1
+        "Int", target
     )
+
+    if from = target
+        return
+
+    ; Windows sometimes switches desktop to keep the focused
+    ; window in view and sometimes does not, so neither setting
+    ; can be left relying on what it happens to do this time.
+    if Setting("FollowRuleMoves") {
+        GoToDesktop(desktop)
+
+        ; Following the window means landing on it, rather than on
+        ; whatever else happened to be in front over there.
+        try
+            WinActivate("ahk_id " hwnd)
+
+        return
+    }
+
+    ; Staying put. Taking the focus off the window that has just
+    ; left is what stops Windows following it, and the switch can
+    ; arrive a moment later, so the desktop is checked again.
+    if CurrentDesktop() != from
+        DllCall("VirtualDesktopAccessor\GoToDesktopNumber", "Int", from)
+
+    FocusDesktop(from)
+
+    Sleep 300
+
+    if CurrentDesktop() != from
+        DllCall("VirtualDesktopAccessor\GoToDesktopNumber", "Int", from)
 }
 
 

@@ -83,8 +83,29 @@ ResolveConfig(path) {
     problems := []
     bindings := []
     rules := []
+    settings := Map()
+    settings.CaseSense := "Off"
 
     bound := Map()
+
+    for entry in SectionEntries(sections, "Settings") {
+        if !SettingDefaults.Has(entry.key) {
+            problems.Push('[Settings] Unknown setting "' entry.key '"')
+            continue
+        }
+
+        value := false
+
+        if !ParseBoolean(entry.value, &value) {
+            problems.Push(
+                '[Settings] "' entry.key '" should be true or false'
+                ' but was "' entry.value '"'
+            )
+            continue
+        }
+
+        settings[entry.key] := value
+    }
 
     for entry in SectionEntries(sections, "Keybinds") {
         try
@@ -134,7 +155,12 @@ ResolveConfig(path) {
         })
     }
 
-    return { bindings: bindings, rules: rules, problems: problems }
+    return {
+        bindings: bindings,
+        rules: rules,
+        settings: settings,
+        problems: problems
+    }
 }
 
 
@@ -154,6 +180,8 @@ LoadConfig() {
 
     resolved := ResolveConfig(path)
     ConfigProblems := resolved.problems
+
+    ApplySettings(resolved.settings)
 
     for binding in resolved.bindings {
         ; AutoHotkey decides what counts as a real key name, so let

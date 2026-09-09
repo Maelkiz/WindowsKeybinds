@@ -1,8 +1,17 @@
+; Setting() lives here, and this file does not load without it.
+#Include Settings.ahk
+
+
 vda := DllCall(
     "LoadLibrary",
     "Str", A_ScriptDir "\VirtualDesktopAccessor.dll",
     "Ptr"
 )
+
+CurrentDesktop() {
+    return DllCall("VirtualDesktopAccessor\GetCurrentDesktopNumber", "Int")
+}
+
 
 GoToDesktop(n) {
     DllCall(
@@ -24,7 +33,7 @@ FocusDesktop(index) {
     deadline := A_TickCount + 500
 
     while A_TickCount < deadline {
-        if DllCall("VirtualDesktopAccessor\GetCurrentDesktopNumber", "Int") = index
+        if CurrentDesktop() = index
             break
 
         Sleep 20
@@ -90,9 +99,29 @@ MoveWindowToDesktop(n) {
     if !hwnd
         return
 
+    from := CurrentDesktop()
+
     DllCall(
         "VirtualDesktopAccessor\MoveWindowToDesktopNumber",
         "Ptr", hwnd,
         "Int", n - 1
     )
+
+    if Setting("FollowManualMoves") {
+        GoToDesktop(n)
+
+        ; Land on the window that was sent over, rather than on
+        ; whatever else happened to be in front there.
+        try
+            WinActivate("ahk_id " hwnd)
+
+        return
+    }
+
+    ; Staying behind, but the window that had the focus has
+    ; just left, so the focus needs somewhere else to go.
+    if CurrentDesktop() != from
+        DllCall("VirtualDesktopAccessor\GoToDesktopNumber", "Int", from)
+
+    FocusDesktop(from)
 }
