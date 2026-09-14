@@ -11,7 +11,6 @@ global SettingDefaults := Map()
 SettingDefaults.CaseSense := "Off"
 
 SettingDefaults["FollowManualMoves"] := true
-SettingDefaults["FollowRuleMoves"] := true
 SettingDefaults["UnbindStartMenu"] := false
 SettingDefaults["ShowFocusRing"] := true
 

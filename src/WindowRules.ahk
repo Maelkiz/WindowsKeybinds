@@ -115,45 +115,14 @@ ApplyRule(hwnd) {
     if !Rules.Has(processName)
         return
 
-    desktop := Rules[processName]
-    target := desktop - 1
-    from := CurrentDesktop()
-
+    ; The window is put where the rule says and nothing else is
+    ; touched: no desktop switch, no focus change. Whatever
+    ; Windows does in response is left alone.
     DllCall(
         "VirtualDesktopAccessor\MoveWindowToDesktopNumber",
         "Ptr", hwnd,
-        "Int", target
+        "Int", Rules[processName] - 1
     )
-
-    if from = target
-        return
-
-    ; Windows sometimes switches desktop to keep the focused
-    ; window in view and sometimes does not, so neither setting
-    ; can be left relying on what it happens to do this time.
-    if Setting("FollowRuleMoves") {
-        GoToDesktop(desktop)
-
-        ; Following the window means landing on it, rather than on
-        ; whatever else happened to be in front over there.
-        try
-            WinActivate("ahk_id " hwnd)
-
-        return
-    }
-
-    ; Staying put. Taking the focus off the window that has just
-    ; left is what stops Windows following it, and the switch can
-    ; arrive a moment later, so the desktop is checked again.
-    if CurrentDesktop() != from
-        DllCall("VirtualDesktopAccessor\GoToDesktopNumber", "Int", from)
-
-    FocusDesktop(from)
-
-    Sleep 300
-
-    if CurrentDesktop() != from
-        DllCall("VirtualDesktopAccessor\GoToDesktopNumber", "Int", from)
 }
 
 

@@ -69,10 +69,11 @@ them back to a known-good state comes first; the diagnosis can wait.
 `%USERPROFILE%\.config\WindowsKeybinds\config.ini`, and its settings can
 invert how a change behaves.
 
-`FollowRuleMoves` is the one to watch. With it on, a rule moving a window
-also takes the user to that window's desktop, so a rule that fires when it
-should not does not merely misplace a window: it teleports the user. Reasoning
-about a change while assuming the default of `false` will miss that entirely.
+`FollowManualMoves` is the one to watch. With it on, sending a window to
+another desktop also takes the user there, so the same keypress lands them
+somewhere different depending on the setting. The script's default is `true`
+and the live config sets it to `false`; reasoning from either one alone will
+get it wrong half the time.
 
 Read the live config before predicting what a change will do.
 

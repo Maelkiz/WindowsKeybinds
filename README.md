@@ -109,23 +109,19 @@ themselves.
 | Setting | Default | Meaning |
 |---------|---------|---------|
 | `FollowManualMoves` | `true` | `Super`+`Shift`+`<number>` takes you along to the desktop the window was sent to |
-| `FollowRuleMoves` | `true` | A window moved by a window rule takes you along to its desktop as it opens |
 | `UnbindStartMenu` | `false` | Stop the Windows key on its own from opening the start menu |
 | `ShowFocusRing` | `true` | Colour the border of the focused window |
 
 ```ini
 [Settings]
 FollowManualMoves = true
-FollowRuleMoves = false
 UnbindStartMenu = true
 ShowFocusRing = true
 ```
 
-All accept `true` or `false`, and `1` or `0`. Set `FollowRuleMoves = false` if
-you would rather rules tidied windows away in the background without pulling
-you off whatever you were doing. Either way the keyboard focus is never left
-on a window that has gone to another desktop, so what you type always goes to
-something you can see.
+All accept `true` or `false`, and `1` or `0`. With `FollowManualMoves = false`
+the keyboard focus is never left on a window that has gone to another desktop,
+so what you type always goes to something you can see.
 
 `UnbindStartMenu` frees up the Windows key itself. `Super`+`<key>` combinations
 carry on working, and binding `OpenStartMenu` to something gives you the start
@@ -182,6 +178,10 @@ Windows of a given process can be sent to a given virtual desktop as they open:
 chrome.exe = 2
 Code.exe = 3
 ```
+
+A rule places the window and does nothing else. It never switches desktop for
+you and never moves the focus, so where you end up is whatever Windows does on
+its own when a window opens somewhere else.
 
 ### When something is wrong
 
