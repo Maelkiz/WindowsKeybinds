@@ -84,8 +84,27 @@ event when you leave the desktop it is on; a plain AutoHotkey window and
 Outlook's main window do not. A rule built on "a hide means the window gave up
 its place" therefore held for Outlook and broke badly for Chrome.
 
+That Chrome hide turned out not to come from the browser window at all. Event
+logging showed it belongs to a second window of the same process, class
+`Chrome_RenderWidgetHostHWND`, titled "Chrome Legacy Window", which shows and
+hides several times per desktop switch. The browser window itself, class
+`Chrome_WidgetWin_1`, emits cloak and uncloak instead and keeps its desktop
+number throughout. So "which events does this application emit" is really
+"which events does each of its windows emit", and the noisy one is easy to
+mistake for the real one.
+
+The legacy window also reports no owner, so a filter on `GW_OWNER` lets it
+through. It is a child window, and `WS_CHILD` is what excludes it.
+
 Cloaking and hiding also look alike from the outside. Both report a desktop
 number of `-1`, so that number cannot be used to tell them apart.
+`DwmGetWindowAttribute` with `DWMWA_CLOAKED` does distinguish them.
+
+A window that its application closes to the tray is a third case again. It is
+neither destroyed nor cloaked: it keeps its handle, so opening the application
+again raises a show and no create. Windows then reassigns it to whichever
+desktop is in front at that moment, which is why a window rule cannot place
+such a window once and assume it stays placed. Teams behaves this way.
 
 If a change depends on which events a window emits, check it against several
 real applications before relying on it.
