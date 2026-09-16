@@ -30,9 +30,12 @@ Either double-click it in the explorer or run it from a terminal like so:
 ```pwsh
 .\scripts\Install.ps1
 ```
-This makes the keybinds run on login and creates your config file, printing
-where it put it. It is safe to run again later, as an existing config is never
-overwritten.
+This copies the files to `%LOCALAPPDATA%\Programs\WindowsKeybinds`, makes the
+keybinds run on login from there, and creates your config file, printing where
+it put each. Your clone is only needed to run this script; once installed, it
+can be deleted, moved, or used to try changes without touching what runs on
+login. Re-running this script later updates the installed copy, and an
+existing config is never overwritten.
 
 Add `-Start` to start the keybinds there and then, rather than leaving them
 until the next time you log in:
@@ -40,6 +43,11 @@ until the next time you log in:
 ```pwsh
 .\scripts\Install.ps1 -Start
 ```
+
+Prefer to run the keybinds straight from your clone instead, with no copy
+made? Pass `-InPlace`. Editing `src\` then only takes a
+`.\scripts\Restart.ps1`, at the cost of the clone having to stay where it is
+and stay working, since it is now what runs on login.
 
 ### 3. Set up virtual desktops
 If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybinds, press `Super`+`Tab` and ensure you have 10 virtual desktops set up (fewer than 10 will also work).
@@ -53,26 +61,33 @@ If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybind
 | [lib/](lib/) | The vendored `VirtualDesktopAccessor.dll` |
 | [scripts/](scripts/) | PowerShell helpers: `Install`, `Uninstall`, `Restart` |
 
-The keybinds run from your clone rather than being copied anywhere, so keep it
-somewhere permanent. If you do move it, run `.\scripts\Install.ps1` again to
-point the startup shortcut at the new location; it will say what it
-repointed from.
+By default the keybinds run from the copy under `%LOCALAPPDATA%\Programs`,
+kept separate from your clone. With `-InPlace`, they run from the clone
+instead, which then needs to stay put; running `.\scripts\Install.ps1` again
+after moving it repoints the startup shortcut at the new location, and says
+what it repointed from.
 
 ## Uninstalling
+
+Run the copy under `%LOCALAPPDATA%\Programs\WindowsKeybinds\scripts\Uninstall.ps1`,
+or, from your clone:
 
 ```pwsh
 .\scripts\Uninstall.ps1
 ```
 
-Stops the keybinds and stops them running on login. Your config file is kept
-and its location printed, so add `-RemoveConfig` if you want that gone too.
-The clone is never touched either way, so delete it yourself afterwards.
+Either way it finds the real installation by following the startup shortcut,
+stops the keybinds, stops them running on login, and removes the installed
+copy. Your config file is kept and its location printed, so add
+`-RemoveConfig` if you want that gone too. With `-InPlace` there was never a
+separate copy, so only the shortcut and config are touched; the clone itself
+is left alone either way, so delete it yourself if you installed that way.
 
-If the startup shortcut belongs to a different clone, it is left alone and
+If the startup shortcut belongs to a different install, it is left alone and
 reported rather than removed. Pass `-Force` to remove it regardless.
 
-Should you delete the clone before uninstalling, the uninstaller goes with it.
-Two things are then left to remove by hand:
+Should you delete the installed copy before uninstalling, two things are then
+left to remove by hand:
 
 ```
 %APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\WindowsKeybinds.lnk
@@ -100,7 +115,7 @@ These locations are searched in order, and the first one that exists is used:
 1. The path in the `WINDOWSKEYBINDS_CONFIG` environment variable
 2. `%USERPROFILE%\.config\WindowsKeybinds\config.ini`
 3. `%APPDATA%\WindowsKeybinds\config.ini`
-4. `src\config.ini`, next to the scripts, for a portable install
+4. `src\config.ini`, next to the AutoHotkey scripts, for a portable install
 
 Changes are picked up on their own, a second or so after you save. Only
 `.\scripts\Restart.ps1` is needed after editing the AutoHotkey scripts

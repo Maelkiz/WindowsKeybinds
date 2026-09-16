@@ -62,6 +62,19 @@ Restart with the user's knowledge, and if anything looks wrong, revert to the
 committed version and restart again before investigating further. Getting
 them back to a known-good state comes first; the diagnosis can wait.
 
+## The clone and the running installation are usually different places
+
+`scripts/Install.ps1` normally copies `src/`, `defaults/`, `lib/` and
+`scripts/` to `%LOCALAPPDATA%\Programs\WindowsKeybinds` and points the startup
+shortcut there, so the clone you are editing is not what is running unless the
+user installed with `-InPlace`. Editing a file under `src/` and restarting
+changes nothing until `Install.ps1` is run again, which looks exactly like the
+change not working.
+
+Before concluding a change had no effect, check which directory the startup
+shortcut actually points at (`scripts/Common.ps1`'s `Resolve-InstallDir` does
+this) rather than assuming it is the clone.
+
 ## Test against the user's config, not the defaults
 
 `defaults/config.default.ini` is a template. The live config is found by
