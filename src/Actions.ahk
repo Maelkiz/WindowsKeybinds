@@ -14,6 +14,7 @@
 #Include LaunchTerminal.ahk
 #Include LaunchWindowsSettings.ahk
 #Include ManageVirtualDesktops.ahk
+#Include OpenConfig.ahk
 #Include StartMenu.ahk
 #Include ToggleDesktopIcons.ahk
 #Include ToggleMaximization.ahk
@@ -40,6 +41,7 @@ RegisterAction("CloseWindow",           CloseActiveWindow)
 RegisterAction("LaunchBrowser",         LaunchBrowser)
 RegisterAction("LaunchTerminal",        LaunchNewTerminal)
 RegisterAction("LaunchWindowsSettings", LaunchWindowsSettings)
+RegisterAction("OpenConfig",            OpenConfig)
 RegisterAction("OpenStartMenu",         OpenStartMenu)
 RegisterAction("ToggleMaximization",    ToggleMaximizeActiveWindow)
 RegisterAction("ToggleDesktopIcons",    ToggleDesktopIcons)

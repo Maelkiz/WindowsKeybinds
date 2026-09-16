@@ -7,6 +7,7 @@ Uses AutoHotkey v2 to make a better keyboard-first experience on Windows.
 | `Super`+`Enter` | Launch a new terminal window |
 | `Super`+`B` | Launch a new browser window |
 | `Super`+`,` | Open the Windows settings app |
+| `Super`+`Shift`+`,` | Open the config file for editing |
 | `Super`+`F` | Toggle window maximization state |
 | `Super`+`Q` | Close window |
 | `Super`+`C` | Center window |
@@ -179,6 +180,7 @@ physical keys, so `Plus` and `Equals` are the same key — write
 | `LaunchBrowser` | |
 | `LaunchTerminal` | |
 | `LaunchWindowsSettings` | |
+| `OpenConfig` | |
 | `OpenStartMenu` | |
 | `ToggleMaximization` | |
 | `ToggleDesktopIcons` | |
