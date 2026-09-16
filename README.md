@@ -151,9 +151,9 @@ menu back on a key of your choosing.
 its own, which is a one pixel line, so it is a quiet hint rather than a shout.
 Windows 11 only, and apps that draw their own title bars may ignore it.
 
-`AutoCenterWindows` centers a window the moment it is created, the same way
-the `CenterWindow` keybind does by hand. It only fires on an actual creation,
-not when an app that closes to the tray shows a window it already had, so
+`AutoCenterWindows` centers a window the first time it appears, the same way
+the `CenterWindow` keybind does by hand. It only fires once per window, not
+when an app that closes to the tray shows a window it already had, so
 re-opening one of those does not undo wherever you last put it.
 
 ### Keybinds

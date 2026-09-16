@@ -22,11 +22,22 @@ AddRule(processName, desktop) {
 ; EVENT_OBJECT_CREATE
 EVENT_OBJECT_CREATE := 0x8000
 
+; EVENT_OBJECT_DESTROY
+global EVENT_OBJECT_DESTROY := 0x8001
+
 ; EVENT_OBJECT_SHOW
 global EVENT_OBJECT_SHOW := 0x8002
 
 ; OBJID_WINDOW
 OBJID_WINDOW := 0
+
+; Handles already handed to ApplyRule and, if it applies, centered.
+; An app that closes to the tray keeps its handle and only ever
+; shows the same window again, never creating a new one, so a
+; handle already in here means "seen before", not "new". Cleared on
+; EVENT_OBJECT_DESTROY, so a later, unrelated window that happens to
+; reuse the same handle is not mistaken for one already seen.
+global KnownWindows := Map()
 
 ; GW_OWNER
 global GW_OWNER := 4
@@ -50,8 +61,14 @@ global WinEventCallback := CallbackCreate(
 ; it is shown, so a window the rule placed once does not stay
 ; placed. Show is what catches that.
 ;
-; The range takes in EVENT_OBJECT_DESTROY at 0x8001 as well,
-; which WinEventProc drops.
+; Create alone is also not enough the other way round: some apps'
+; real top-level window (Windows Terminal, mintty) never fires a
+; create event at all, only ever a show, even the first time. So
+; both are let through, and KnownWindows is what actually tells a
+; new window from a reopened one, not which event fired.
+;
+; The range takes in EVENT_OBJECT_DESTROY at 0x8001 too, which is
+; used to forget a handle once its window is gone.
 global WinEventHook := DllCall(
     "SetWinEventHook",
     "UInt", EVENT_OBJECT_CREATE,
@@ -76,7 +93,7 @@ WinEventProc(
     idEventThread,
     dwmsEventTime
 ) {
-    global Rules
+    global KnownWindows
 
     ; CallbackCreate hands every parameter over as a 64 bit value,
     ; but event, idObject and idChild are 32 bit, so the upper half
@@ -88,9 +105,7 @@ WinEventProc(
     idObject &= 0xFFFFFFFF
     idChild &= 0xFFFFFFFF
 
-    ; The hook covers destroy as well, which says nothing about
-    ; where a window should live.
-    if event != EVENT_OBJECT_CREATE && event != EVENT_OBJECT_SHOW
+    if event != EVENT_OBJECT_CREATE && event != EVENT_OBJECT_SHOW && event != EVENT_OBJECT_DESTROY
         return
 
     ; Only interested in top-level windows
@@ -101,7 +116,13 @@ WinEventProc(
     if !hwnd
         return
 
-    HandleNewWindow(hwnd, event)
+    if event = EVENT_OBJECT_DESTROY {
+        if KnownWindows.Has(hwnd)
+            KnownWindows.Delete(hwnd)
+        return
+    }
+
+    HandleNewWindow(hwnd)
 }
 
 
@@ -109,11 +130,11 @@ WinEventProc(
 ; Window Processing
 ; ============================================================
 
-HandleNewWindow(hwnd, event) {
+HandleNewWindow(hwnd) {
     ; The event can occur before the process/window
     ; is fully ready, so defer processing slightly.
     SetTimer(
-        (*) => ProcessNewWindow(hwnd, event),
+        (*) => ProcessNewWindow(hwnd),
         -100
     )
 }
@@ -122,7 +143,9 @@ HandleNewWindow(hwnd, event) {
 ; Filters out everything that is not a real, top-level app window,
 ; then hands the survivors to whichever of centering and window
 ; rules applies.
-ProcessNewWindow(hwnd, event) {
+ProcessNewWindow(hwnd) {
+    global KnownWindows
+
     if !WinExist("ahk_id " hwnd)
         return
 
@@ -141,11 +164,16 @@ ProcessNewWindow(hwnd, event) {
         return
     }
 
-    ; Centering only happens on an actual creation. A show can also
-    ; mean an app un-hiding a window it kept open in the tray, and
-    ; re-centering that would undo wherever the user had since
-    ; moved it.
-    if event = EVENT_OBJECT_CREATE && Setting("AutoCenterWindows")
+    ; Whether this handle has been processed before, not which
+    ; event fired, is what tells a new window from a reopened one:
+    ; some apps' real window never fires a create event at all, only
+    ; ever a show. Marked seen unconditionally, so toggling the
+    ; setting on later never mistakes an already-known window for a
+    ; new one.
+    isNewWindow := !KnownWindows.Has(hwnd)
+    KnownWindows[hwnd] := true
+
+    if isNewWindow && Setting("AutoCenterWindows")
         CenterWindow(hwnd)
 
     ApplyRule(hwnd)
