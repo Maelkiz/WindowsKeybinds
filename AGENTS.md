@@ -64,7 +64,7 @@ them back to a known-good state comes first; the diagnosis can wait.
 
 ## Test against the user's config, not the defaults
 
-`src/config.default.ini` is a template. The live config is found by
+`defaults/config.default.ini` is a template. The live config is found by
 `FindConfigPath()` in `src/ConfigPaths.ahk`, normally
 `%USERPROFILE%\.config\WindowsKeybinds\config.ini`, and its settings can
 invert how a change behaves.

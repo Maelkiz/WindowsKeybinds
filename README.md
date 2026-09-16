@@ -48,7 +48,9 @@ If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybind
 
 | Path | Contents |
 |------|----------|
-| [src/](src/) | The AutoHotkey scripts, and the files they load at runtime |
+| [src/](src/) | The AutoHotkey scripts |
+| [defaults/](defaults/) | The config template, copied out on first run |
+| [lib/](lib/) | The vendored `VirtualDesktopAccessor.dll` |
 | [scripts/](scripts/) | PowerShell helpers: `Install`, `Uninstall`, `Restart` |
 
 The keybinds run from your clone rather than being copied anywhere, so keep it
@@ -90,7 +92,7 @@ The keybinds create it themselves too, if they get started some other way, so
 there is always one there to edit.
 
 It lives outside the repository so that `git pull` never conflicts with your
-own keybinds. [config.default.ini](src/config.default.ini) is the template it is
+own keybinds. [config.default.ini](defaults/config.default.ini) is the template it is
 copied from, and documents every key name and action inline.
 
 These locations are searched in order, and the first one that exists is used:

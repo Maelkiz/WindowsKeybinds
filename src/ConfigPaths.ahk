@@ -36,7 +36,7 @@ FindConfigPath() {
 ; Install.ps1 normally does this, but doing it here as well means
 ; the keybinds still work when the script is started some other way.
 CreateDefaultConfig() {
-    template := A_ScriptDir "\config.default.ini"
+    template := A_ScriptDir "\..\defaults\config.default.ini"
     home := EnvGet("USERPROFILE")
 
     if !FileExist(template) || home = ""

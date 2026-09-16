@@ -4,7 +4,7 @@
 
 vda := DllCall(
     "LoadLibrary",
-    "Str", A_ScriptDir "\VirtualDesktopAccessor.dll",
+    "Str", A_ScriptDir "\..\lib\VirtualDesktopAccessor.dll",
     "Ptr"
 )
 
