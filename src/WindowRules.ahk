@@ -2,6 +2,11 @@
 ; Rules
 ; ============================================================
 
+; Setting() and CenterWindow() live here, and this file does not
+; load without them.
+#Include Settings.ahk
+#Include CenterWindow.ahk
+
 global Rules := Map()
 
 AddRule(processName, desktop) {
@@ -96,7 +101,7 @@ WinEventProc(
     if !hwnd
         return
 
-    HandleNewWindow(hwnd)
+    HandleNewWindow(hwnd, event)
 }
 
 
@@ -104,21 +109,20 @@ WinEventProc(
 ; Window Processing
 ; ============================================================
 
-HandleNewWindow(hwnd) {
-    global Rules
-
+HandleNewWindow(hwnd, event) {
     ; The event can occur before the process/window
     ; is fully ready, so defer processing slightly.
     SetTimer(
-        (*) => ApplyRule(hwnd),
+        (*) => ProcessNewWindow(hwnd, event),
         -100
     )
 }
 
 
-ApplyRule(hwnd) {
-    global Rules
-
+; Filters out everything that is not a real, top-level app window,
+; then hands the survivors to whichever of centering and window
+; rules applies.
+ProcessNewWindow(hwnd, event) {
     if !WinExist("ahk_id " hwnd)
         return
 
@@ -136,6 +140,20 @@ ApplyRule(hwnd) {
     } catch {
         return
     }
+
+    ; Centering only happens on an actual creation. A show can also
+    ; mean an app un-hiding a window it kept open in the tray, and
+    ; re-centering that would undo wherever the user had since
+    ; moved it.
+    if event = EVENT_OBJECT_CREATE && Setting("AutoCenterWindows")
+        CenterWindow(hwnd)
+
+    ApplyRule(hwnd)
+}
+
+
+ApplyRule(hwnd) {
+    global Rules
 
     try {
         processName := StrLower(

@@ -7,6 +7,13 @@ CenterActiveWindow() {
     if !hwnd
         return
 
+    CenterWindow(hwnd)
+}
+
+
+; Shared with WindowRules.ahk, so that a newly created window can be
+; centered the same way the keybind centers the active one.
+CenterWindow(hwnd) {
     try
         WinGetPos(,, &width, &height, "ahk_id " hwnd)
     catch

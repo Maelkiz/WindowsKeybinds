@@ -13,6 +13,7 @@ SettingDefaults.CaseSense := "Off"
 SettingDefaults["FollowManualMoves"] := true
 SettingDefaults["UnbindStartMenu"] := false
 SettingDefaults["ShowFocusRing"] := true
+SettingDefaults["AutoCenterWindows"] := false
 
 global SettingValues := Map()
 SettingValues.CaseSense := "Off"

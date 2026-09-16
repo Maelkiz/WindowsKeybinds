@@ -129,12 +129,14 @@ themselves.
 | `FollowManualMoves` | `true` | `Super`+`Shift`+`<number>` takes you along to the desktop the window was sent to |
 | `UnbindStartMenu` | `false` | Stop the Windows key on its own from opening the start menu |
 | `ShowFocusRing` | `true` | Colour the border of the focused window |
+| `AutoCenterWindows` | `false` | Center every newly created window on its monitor |
 
 ```ini
 [Settings]
 FollowManualMoves = true
 UnbindStartMenu = true
 ShowFocusRing = true
+AutoCenterWindows = false
 ```
 
 All accept `true` or `false`, and `1` or `0`. With `FollowManualMoves = false`
@@ -148,6 +150,11 @@ menu back on a key of your choosing.
 `ShowFocusRing` asks Windows to draw the focused window's border in a colour of
 its own, which is a one pixel line, so it is a quiet hint rather than a shout.
 Windows 11 only, and apps that draw their own title bars may ignore it.
+
+`AutoCenterWindows` centers a window the moment it is created, the same way
+the `CenterWindow` keybind does by hand. It only fires on an actual creation,
+not when an app that closes to the tray shows a window it already had, so
+re-opening one of those does not undo wherever you last put it.
 
 ### Keybinds
 
