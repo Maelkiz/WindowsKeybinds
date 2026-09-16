@@ -1,8 +1,9 @@
-# Removes WindowsKeybinds: stops the keybinds and stops them
-# running on login.
+# Removes WindowsKeybinds: stops the keybinds, stops them running
+# on login, and removes the installed copy of the files.
 #
-# Your configuration is kept unless -RemoveConfig is given, and the
-# clone itself is never touched. Safe to run more than once.
+# Your configuration is kept unless -RemoveConfig is given. A clone
+# you are running -InPlace from is never touched. Safe to run more
+# than once.
 
 [CmdletBinding()]
 param(
@@ -15,9 +16,9 @@ param(
 
 . "$PSScriptRoot\Common.ps1"
 
-$RepoDir = Split-Path $PSScriptRoot -Parent
-$SrcDir = Join-Path $RepoDir "src"
-$MasterScript = Join-Path $SrcDir "WindowsKeybinds.ahk"
+$OwnDir = Split-Path $PSScriptRoot -Parent
+$InstallDir = Resolve-InstallDir -FallbackDir $OwnDir
+$MasterScript = Join-Path $InstallDir "src\WindowsKeybinds.ahk"
 
 
 # ------------------------------------------------------------
@@ -28,8 +29,16 @@ $MasterScript = Join-Path $SrcDir "WindowsKeybinds.ahk"
 # out from the template whenever it reloads, which would undo
 # -RemoveConfig, and it would otherwise keep the keybinds live
 # until the next reboot.
+#
+# Stopped from both the resolved install and the directory this was
+# run from, so an in-place instance left running from an old clone
+# does not survive a later, proper install being uninstalled.
 
-if ((Stop-Keybinds -RepoDir $RepoDir) -eq 0) {
+$Stopped = (Stop-Keybinds -InstallDir $InstallDir)
+if ($OwnDir -ne $InstallDir) {
+    $Stopped += (Stop-Keybinds -InstallDir $OwnDir)
+}
+if ($Stopped -eq 0) {
     Write-Host "Keybinds:         not running"
 }
 
@@ -47,7 +56,7 @@ else {
     $Shell = New-Object -ComObject WScript.Shell
     $Target = $Shell.CreateShortcut($ShortcutPath).TargetPath
 
-    # Another clone may own this shortcut, and removing it would
+    # Another install may own this shortcut, and removing it would
     # break that installation rather than this one.
     if ($Target -and $Target -ne $MasterScript -and -not $Force) {
         Write-Warning "The startup shortcut belongs to another copy, so it was left alone:"
@@ -73,7 +82,7 @@ if (-not (Find-AutoHotkey)) {
     Write-Host "  It is usually at %USERPROFILE%\.config\WindowsKeybinds\config.ini"
 }
 else {
-    $ConfigPath = Get-ConfigPath -RepoDir $RepoDir -Mode find
+    $ConfigPath = Get-ConfigPath -InstallDir $InstallDir -Mode find
 
     if (-not $ConfigPath) {
         Write-Host "Configuration:    none found"
@@ -98,5 +107,29 @@ else {
     }
 }
 
+
+# ------------------------------------------------------------
+# Installed copy
+# ------------------------------------------------------------
+
+# Only ever removed when the marker file proves Install.ps1 put it
+# there. An -InPlace install never gets one, since nothing was ever
+# copied into the clone, so this naturally leaves a clone alone
+# without having to ask separately whether this is one.
+#
+# When this is the installed copy's own Uninstall.ps1, this deletes
+# the very file that is running. PowerShell has already read the
+# whole script in by this point, so that is safe.
+
 Write-Host ""
-Write-Host "The clone itself was left alone, delete it whenever you like."
+
+if (Test-OurInstall -InstallDir $InstallDir) {
+    Remove-Item $InstallDir -Recurse -Force
+    Write-Host "Installed copy:   removed"
+    Write-Host "    $InstallDir"
+}
+else {
+    Write-Host "Installed copy:   left in place, this looks like a clone rather than a copy"
+    Write-Host "    $InstallDir"
+    Write-Host "Delete it yourself whenever you like."
+}
