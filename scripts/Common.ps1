@@ -4,8 +4,22 @@
 #     . "$PSScriptRoot\Common.ps1"
 
 
-# Where the shortcut that makes the keybinds run on login goes.
-function Get-ShortcutPath {
+# Name of the scheduled task that makes the keybinds run on login.
+#
+# A logon-triggered scheduled task starts as soon as the user logs
+# in. A shortcut in the Startup folder does not: Explorer
+# deliberately staggers Startup-folder apps for a while after logon
+# to keep the desktop responsive, which is what used to make the
+# keybinds take up to a minute to come alive.
+function Get-TaskName {
+    "WindowsKeybinds"
+}
+
+
+# Where older versions of this project put a Startup-folder
+# shortcut, before it switched to a scheduled task. Only kept around
+# so Install and Uninstall can clean up a leftover one.
+function Get-LegacyShortcutPath {
     Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs\Startup\WindowsKeybinds.lnk"
 }
 
@@ -34,27 +48,24 @@ function Test-OurInstall {
 
 
 # Works out which directory actually owns the running keybinds, by
-# following the startup shortcut rather than assuming the caller is
-# sitting in it. Restart and Uninstall use this so that running them
-# from a clone acts on the real installation, not on the clone.
+# following the logon scheduled task rather than assuming the caller
+# is sitting in it. Restart and Uninstall use this so that running
+# them from a clone acts on the real installation, not on the clone.
 #
 # Falls back to the default install directory if that exists, then
 # to $FallbackDir (normally the caller's own parent directory), so
-# there is still something sensible to act on when there is no
-# shortcut yet.
+# there is still something sensible to act on when there is no task
+# yet.
 function Resolve-InstallDir {
     param([Parameter(Mandatory = $true)][string]$FallbackDir)
 
-    $ShortcutPath = Get-ShortcutPath
-    if (Test-Path $ShortcutPath) {
+    $Task = Get-ScheduledTask -TaskName (Get-TaskName) -ErrorAction SilentlyContinue
+    if ($Task) {
         try {
-            $Shell = New-Object -ComObject WScript.Shell
-            $Target = $Shell.CreateShortcut($ShortcutPath).TargetPath
-
-            # Target is "...\src\WindowsKeybinds.ahk"; the install
-            # directory is two levels up from that.
-            if ($Target) {
-                $SrcDir = Split-Path $Target -Parent
+            # The action's working directory is "...\src"; the
+            # install directory is one level up from that.
+            $SrcDir = $Task.Actions[0].WorkingDirectory
+            if ($SrcDir) {
                 $Candidate = Split-Path $SrcDir -Parent
                 if ($Candidate -and (Test-Path $Candidate)) {
                     return $Candidate

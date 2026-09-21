@@ -65,8 +65,14 @@ If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybind
 By default the keybinds run from the copy under `%LOCALAPPDATA%\Programs`,
 kept separate from your clone. With `-InPlace`, they run from the clone
 instead, which then needs to stay put; running `.\scripts\Install.ps1` again
-after moving it repoints the startup shortcut at the new location, and says
-what it repointed from.
+after moving it repoints the startup task at the new location, and says what
+it repointed from.
+
+Startup runs the keybinds from a logon-triggered Scheduled Task named
+`WindowsKeybinds`, rather than a shortcut in the Startup folder. A
+Startup-folder app is deliberately staggered by Explorer for a while after
+logon to keep the desktop responsive, which could delay the keybinds by up to
+a minute; a logon-triggered task is not subject to that.
 
 ## Uninstalling
 
@@ -77,21 +83,21 @@ or, from your clone:
 .\scripts\Uninstall.ps1
 ```
 
-Either way it finds the real installation by following the startup shortcut,
+Either way it finds the real installation by following the startup task,
 stops the keybinds, stops them running on login, and removes the installed
 copy. Your config file is kept and its location printed, so add
 `-RemoveConfig` if you want that gone too. With `-InPlace` there was never a
-separate copy, so only the shortcut and config are touched; the clone itself
-is left alone either way, so delete it yourself if you installed that way.
+separate copy, so only the task and config are touched; the clone itself is
+left alone either way, so delete it yourself if you installed that way.
 
-If the startup shortcut belongs to a different install, it is left alone and
+If the startup task belongs to a different install, it is left alone and
 reported rather than removed. Pass `-Force` to remove it regardless.
 
-Should you delete the installed copy before uninstalling, two things are then
-left to remove by hand:
+Should you delete the installed copy before uninstalling, the scheduled task
+named `WindowsKeybinds` (Task Scheduler, no folder) and the config directory
+are then left to remove by hand:
 
 ```
-%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\WindowsKeybinds.lnk
 %USERPROFILE%\.config\WindowsKeybinds\
 ```
 

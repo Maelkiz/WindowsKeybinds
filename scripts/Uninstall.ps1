@@ -10,7 +10,8 @@ param(
     # Delete the configuration file as well.
     [switch]$RemoveConfig,
 
-    # Remove the startup shortcut even if it belongs elsewhere.
+    # Remove the startup task (or a leftover startup shortcut) even
+    # if it belongs elsewhere.
     [switch]$Force
 )
 
@@ -47,25 +48,44 @@ if ($Stopped -eq 0) {
 # Stop running on login
 # ------------------------------------------------------------
 
-$ShortcutPath = Get-ShortcutPath
+$TaskName = Get-TaskName
+$Task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 
-if (-not (Test-Path $ShortcutPath)) {
-    Write-Host "Startup shortcut: none found"
+if (-not $Task) {
+    Write-Host "Startup task:     none found"
 }
 else {
-    $Shell = New-Object -ComObject WScript.Shell
-    $Target = $Shell.CreateShortcut($ShortcutPath).TargetPath
+    $TaskSrcDir = $Task.Actions[0].WorkingDirectory
 
-    # Another install may own this shortcut, and removing it would
-    # break that installation rather than this one.
-    if ($Target -and $Target -ne $MasterScript -and -not $Force) {
-        Write-Warning "The startup shortcut belongs to another copy, so it was left alone:"
-        Write-Host "    $Target"
+    # Another install may own this task, and removing it would break
+    # that installation rather than this one.
+    if ($TaskSrcDir -and $TaskSrcDir -ne (Join-Path $InstallDir "src") -and -not $Force) {
+        Write-Warning "The startup task belongs to another copy, so it was left alone:"
+        Write-Host "    $TaskSrcDir"
         Write-Host "  Run with -Force to remove it anyway."
     }
     else {
-        Remove-Item $ShortcutPath -Force
-        Write-Host "Startup shortcut: removed"
+        Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
+        Write-Host "Startup task:     removed"
+    }
+}
+
+# Leftover from a version that used a Startup-folder shortcut
+# instead of a scheduled task.
+$LegacyShortcutPath = Get-LegacyShortcutPath
+
+if (Test-Path $LegacyShortcutPath) {
+    $Shell = New-Object -ComObject WScript.Shell
+    $LegacyTarget = $Shell.CreateShortcut($LegacyShortcutPath).TargetPath
+
+    if ($LegacyTarget -and $LegacyTarget -ne $MasterScript -and -not $Force) {
+        Write-Warning "The old startup shortcut belongs to another copy, so it was left alone:"
+        Write-Host "    $LegacyTarget"
+        Write-Host "  Run with -Force to remove it anyway."
+    }
+    else {
+        Remove-Item $LegacyShortcutPath -Force
+        Write-Host "Startup shortcut: removed (old-style)"
     }
 }
 

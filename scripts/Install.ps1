@@ -142,33 +142,92 @@ $MasterScript = Join-Path $TargetDir "src\WindowsKeybinds.ahk"
 # Run on login
 # ------------------------------------------------------------
 
-$ShortcutPath = Get-ShortcutPath
+# A scheduled task, not a Startup-folder shortcut: Explorer
+# deliberately staggers Startup-folder apps for a while after logon
+# to keep the desktop responsive, which is what used to make the
+# keybinds take up to a minute to come alive. A logon-triggered task
+# is not subject to that stagger and can also ask for a higher
+# process priority.
 
-try {
-    $Shell = New-Object -ComObject WScript.Shell
+$TaskName = Get-TaskName
+$SrcDir = Join-Path $TargetDir "src"
+$AhkExe = Find-AutoHotkey
 
-    # Worth saying out loud when the install has moved, so that
-    # running this again does not look like it did nothing.
-    $PreviousTarget = ""
-    if (Test-Path $ShortcutPath) {
-        $PreviousTarget = $Shell.CreateShortcut($ShortcutPath).TargetPath
-    }
+# Domain-qualified so this also works correctly on a domain-joined
+# machine, where a bare username is ambiguous.
+$CurrentUser = "$env:USERDOMAIN\$env:USERNAME"
 
-    New-Item -ItemType Directory -Path (Split-Path $ShortcutPath -Parent) -Force | Out-Null
-
-    $Shortcut = $Shell.CreateShortcut($ShortcutPath)
-    $Shortcut.TargetPath = $MasterScript
-    $Shortcut.WorkingDirectory = Join-Path $TargetDir "src"
-    $Shortcut.Save()
-
-    Write-Host "Startup shortcut: $ShortcutPath"
-
-    if ($PreviousTarget -and $PreviousTarget -ne $MasterScript) {
-        Write-Host "  Repointed from:  $PreviousTarget"
-    }
+if (-not $AhkExe) {
+    Write-Warning "Could not find AutoHotkey v2, so no startup task was created."
+    Write-Host "  Install AutoHotkey v2, then run this script again."
 }
-catch {
-    Write-Warning "Could not create the startup shortcut: $($_.Exception.Message)"
+else {
+    try {
+        $ExistingTask = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+
+        # Worth saying out loud when the install has moved, so that
+        # running this again does not look like it did nothing.
+        $PreviousSrcDir = ""
+        if ($ExistingTask) {
+            $PreviousSrcDir = $ExistingTask.Actions[0].WorkingDirectory
+        }
+
+        # Execute is the AutoHotkey interpreter itself, not the .ahk
+        # script: Task Scheduler runs an action's Execute path with
+        # CreateProcess, not ShellExecute, so it does not go through
+        # the file association a Startup-folder shortcut relied on.
+        $Action = New-ScheduledTaskAction -Execute $AhkExe -Argument "`"$MasterScript`"" -WorkingDirectory $SrcDir
+        $Trigger = New-ScheduledTaskTrigger -AtLogOn -User $CurrentUser
+
+        # RunLevel Limited: unelevated, same as a Startup-folder
+        # shortcut would have run. Priority 4 asks Windows to
+        # schedule it above normal-priority apps also starting at
+        # logon; it is not the elevated "above normal" a service
+        # could get, but it is higher than the default of 7.
+        $Principal = New-ScheduledTaskPrincipal -UserId $CurrentUser -LogonType Interactive -RunLevel Limited
+
+        # ExecutionTimeLimit must be disabled: it defaults to 3 days,
+        # and this task is meant to keep running (Persistent)
+        # indefinitely. StartWhenAvailable covers a logon trigger
+        # that was missed, e.g. the task was registered while
+        # already logged in. AllowStartIfOnBatteries and
+        # DontStopIfGoingOnBatteries keep a laptop on battery from
+        # ever refusing to run this or killing it mid-session, which
+        # a Startup-folder shortcut would never have done either.
+        $Settings = New-ScheduledTaskSettingsSet `
+            -Priority 4 `
+            -ExecutionTimeLimit ([TimeSpan]::Zero) `
+            -StartWhenAvailable `
+            -AllowStartIfOnBatteries `
+            -DontStopIfGoingOnBatteries `
+            -MultipleInstances IgnoreNew
+
+        Register-ScheduledTask -TaskName $TaskName -Action $Action -Trigger $Trigger `
+            -Principal $Principal -Settings $Settings -Force | Out-Null
+
+        Write-Host "Startup task:     $TaskName"
+
+        if ($PreviousSrcDir -and $PreviousSrcDir -ne $SrcDir) {
+            Write-Host "  Repointed from:  $PreviousSrcDir"
+        }
+
+        # Leftover from a version that used a Startup-folder shortcut
+        # instead. Only removed when it points at this same install,
+        # so a shortcut belonging to another copy is left for that
+        # copy's own Uninstall to deal with.
+        $LegacyShortcutPath = Get-LegacyShortcutPath
+        if (Test-Path $LegacyShortcutPath) {
+            $Shell = New-Object -ComObject WScript.Shell
+            $LegacyTarget = $Shell.CreateShortcut($LegacyShortcutPath).TargetPath
+            if ($LegacyTarget -eq $MasterScript) {
+                Remove-Item $LegacyShortcutPath -Force
+                Write-Host "  Removed the old startup shortcut, now replaced by the task above."
+            }
+        }
+    }
+    catch {
+        Write-Warning "Could not create the startup task: $($_.Exception.Message)"
+    }
 }
 
 
@@ -182,7 +241,7 @@ catch {
 
 $NoAutoHotkey = $false
 
-if (-not (Find-AutoHotkey)) {
+if (-not $AhkExe) {
     $NoAutoHotkey = $true
     Write-Warning "Could not find AutoHotkey v2, so no config file was created."
     Write-Host "  Install AutoHotkey v2, then run this script again."
