@@ -37,7 +37,12 @@ Some useful ones include:
 | `Super`+`E`| Launch a new file explorer window  |
 | `Super`+`Shift`+`Escape` | Launch a new task manager window |
 
-## Setup Instructions
+## Prerequisites
+
+- Windows 10 or later
+- [AutoHotkey v2](https://www.autohotkey.com/) 
+
+## Installation and Setup
 
 ### 1. Clone this repository:
 ```bash
