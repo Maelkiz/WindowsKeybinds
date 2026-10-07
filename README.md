@@ -1,6 +1,6 @@
 # Windows Keybindings
 
-Uses AutoHotkey v2 to improve the keyboard-first experience on Windows. 
+Uses AutoHotkey v2 to improve the keyboard-first experience on Windows.
 
 | Keybind | Action |
 |---------|--------|
@@ -19,7 +19,7 @@ Also unbinds `F1` from launching the help browser.
 
 All of the above are defaults and can be configured. See [Configuration](#configuration).
 
-## Complimentary Native Windows Keybinds
+## Complementary Native Windows Keybinds
 
 The keybinds provided by **WindowsKeybinds** are meant to be used as a complement to the native window management keybinds already built into Windows.
 
@@ -40,7 +40,7 @@ Some useful ones include:
 ## Prerequisites
 
 - Windows 10 or later
-- [AutoHotkey v2](https://www.autohotkey.com/) 
+- [AutoHotkey v2](https://www.autohotkey.com/)
 
 ## Installation and Setup
 
@@ -50,7 +50,7 @@ git clone https://github.com/Maelkiz/WindowsKeybinds.git
 ```
 
 ### 2. Run the install script:
-Either double-click it in the file explorer or run it from a terminal like so:
+For a normal installation, just run the installation script from a terminal like so:
 ```pwsh
 .\scripts\Install.ps1
 ```
@@ -71,10 +71,10 @@ until the next time you log in:
 Prefer to run the keybinds straight from your clone instead, with no copy
 made? Pass `-InPlace`. Editing `src\` then only takes a
 `.\scripts\Restart.ps1`, at the cost of the clone having to stay where it is
-and stay working, since it is now what runs on login.
+to keep the keybinds working, since it is now what runs on login.
 
 ### 3. Set up virtual desktops
-If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybinds, press `Super`+`Tab` and ensure you have 10 virtual desktops set up (fewer than 10 will also work).
+If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybinds, press Super+Tab and create as many virtual desktops as you want; up to 10 are supported by default.
 
 ## Repository layout
 
@@ -134,7 +134,7 @@ are then left to remove by hand:
 ```
 
 The keybinds create it themselves too, if they get started some other way, so
-there is always one there to edit.
+there is always a config file to edit.
 
 It lives outside the repository so that `git pull` never conflicts with your
 own keybinds. [config.default.ini](defaults/config.default.ini) is the template it is
@@ -147,7 +147,7 @@ These locations are searched in order, and the first one that exists is used:
 3. `%APPDATA%\WindowsKeybinds\config.ini`
 4. `src\config.ini`, next to the AutoHotkey scripts, for a portable install
 
-Changes are picked up on their own, a second or so after you save. Only
+Changes are picked up automatically, a second or so after you save. Only
 `.\scripts\Restart.ps1` is needed after editing the AutoHotkey scripts
 themselves.
 
@@ -245,7 +245,7 @@ key bound twice — is reported in a tray notification naming the line at fault.
 
 At startup, every keybind that does make sense is still applied, so a typo
 never leaves you without a keyboard. When you save a broken config while the
-keybinds are already running, they are left alone entirely and nothing is
+keybinds are already running, they are left alone entirely, and nothing is
 reloaded until the file makes sense again.
 
 ### Adding your own actions
