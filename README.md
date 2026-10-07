@@ -1,6 +1,6 @@
 # Windows Keybindings
 
-Uses AutoHotkey v2 to make a better keyboard-first experience on Windows. 
+Uses AutoHotkey v2 to improve the keyboard-first experience on Windows. 
 
 | Keybind | Action |
 |---------|--------|
@@ -9,15 +9,33 @@ Uses AutoHotkey v2 to make a better keyboard-first experience on Windows.
 | `Super`+`,` | Open the Windows settings app |
 | `Super`+`Shift`+`,` | Open the config file for editing |
 | `Super`+`F` | Toggle window maximization state |
-| `Super`+`Q` | Close window |
-| `Super`+`C` | Center window |
-| `Super`+`<number>` | Switch to virtual desktop of said number |
-| `Super`+`Shift`+`<number>` | Move window to virtual desktop of said number |
+| `Super`+`Q` | Close focused window |
+| `Super`+`C` | Center focused window |
+| `Super`+`<number key>` | Switch to virtual desktop of said number |
+| `Super`+`Shift`+`<number key>` | Move window to virtual desktop of said number |
 | `Super`+`I` | Toggle visibility of desktop icons (hide your mess instead of cleaning it up) |
 
 Also unbinds `F1` from launching the help browser.
 
-All of the above are defaults, and can be configured. See [Configuration](#configuration).
+All of the above are defaults and can be configured. See [Configuration](#configuration).
+
+## Complimentary Native Windows Keybinds
+
+The keybinds provided by **WindowsKeybinds** are meant to be used as a complement to the native window management keybinds already built into Windows.
+
+Some useful ones include:
+
+| Keybind | Action |
+|---------|--------|
+| `Alt`+`Tab` | Cycle through windows on the active virtual desktop |
+| `Alt`+`Shift`+`Tab` | Cycle backward through windows on the active virtual desktop |
+| `Alt`+`Tab` | Instantly cycle to the next window on the active virtual desktop |
+| `Alt`+`Shift`+`Tab` | Instantly cycle to the previous window on the active virtual desktop |
+| `Super`+`D` | Hide/unhide all windows on the active virtual desktop |
+| `Super`+`<arrow key>` | Move, tile, and resize windows |
+| `Super`+`Shift`+`<arrow key>` | Move windows between displays |
+| `Super`+`E`| Launch a new file explorer window  |
+| `Super`+`Shift`+`Escape` | Launch a new task manager window |
 
 ## Setup Instructions
 
@@ -27,7 +45,7 @@ git clone https://github.com/Maelkiz/WindowsKeybinds.git
 ```
 
 ### 2. Run the install script:
-Either double-click it in the explorer or run it from a terminal like so:
+Either double-click it in the file explorer or run it from a terminal like so:
 ```pwsh
 .\scripts\Install.ps1
 ```
@@ -62,7 +80,7 @@ If you want to use the `Super`+`<number>` and `Super`+`Shift`+`<number>` keybind
 | [lib/](lib/) | The vendored `VirtualDesktopAccessor.dll` |
 | [scripts/](scripts/) | PowerShell helpers: `Install`, `Uninstall`, `Restart` |
 
-By default the keybinds run from the copy under `%LOCALAPPDATA%\Programs`,
+By default, the keybinds run from the copy under `%LOCALAPPDATA%\Programs`,
 kept separate from your clone. With `-InPlace`, they run from the clone
 instead, which then needs to stay put; running `.\scripts\Install.ps1` again
 after moving it repoints the startup task at the new location, and says what
@@ -83,7 +101,7 @@ or, from your clone:
 .\scripts\Uninstall.ps1
 ```
 
-Either way it finds the real installation by following the startup task,
+Either way, it finds the real installation by following the startup task,
 stops the keybinds, stops them running on login, and removes the installed
 copy. Your config file is kept and its location printed, so add
 `-RemoveConfig` if you want that gone too. With `-InPlace` there was never a
