@@ -29,8 +29,8 @@ Some useful ones include:
 |---------|--------|
 | `Alt`+`Tab` | Cycle through windows on the active virtual desktop |
 | `Alt`+`Shift`+`Tab` | Cycle backward through windows on the active virtual desktop |
-| `Alt`+`Tab` | Instantly cycle to the next window on the active virtual desktop |
-| `Alt`+`Shift`+`Tab` | Instantly cycle to the previous window on the active virtual desktop |
+| `Alt`+`Escape` | Instantly cycle to the next window on the active virtual desktop |
+| `Alt`+`Shift`+`Escape` | Instantly cycle to the previous window on the active virtual desktop |
 | `Super`+`D` | Hide/unhide all windows on the active virtual desktop |
 | `Super`+`<arrow key>` | Move, tile, and resize windows |
 | `Super`+`Shift`+`<arrow key>` | Move windows between displays |
